@@ -80,6 +80,9 @@ inputs:
   github-token:
     type: utils.security.SecureString
     description: Your GitHub API token.
+  github-name:
+    type: string
+    description: The name of the version.
 
   files:
     type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
