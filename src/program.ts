@@ -65,11 +65,21 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
 
     for (const platform of PlatformType.values()) {
         const platformOptions = { ...action.input, ...action.input[platform] };
+
+        // For GitHub, use only github-specific name (github-name) and ignore the generic root name
+        // unless it is explicitly provided in the github section.
+        if (platform === PlatformType.GITHUB) {
+            const platformSpecific = action.input[platform] as unknown as Record<string, unknown> | undefined;
+            const githubHasOwnName = platformSpecific && Object.prototype.hasOwnProperty.call(platformSpecific, "name") && platformSpecific.name != null;
+            if (!githubHasOwnName) {
+                delete platformOptions.name;
+            }
+        }
         if (!platformOptions?.token?.unwrap()) {
             continue;
         }
 
-        const options = await fillInDefaultValues(platformOptions, platform, githubContext, metadataReader);
+        const options = await fillInDefaultValues(platformOptions as any, platform, githubContext, metadataReader);
         const uploader = createPlatformUploader(platform, { logger, githubContext });
         try {
             action.output[platform as string] = await uploader.upload(options);
@@ -113,7 +123,9 @@ async function fillInDefaultValues<T extends McPublishInput[P], P extends Platfo
     (options as UnionToIntersection<McPublishInput[PlatformType]>).id ||= metadata?.getProjectId(platform) || "";
     options.version ||= githubContext.version || metadata?.version;
     options.versionType ||= VersionType.parseFromFileName(metadata?.version || primaryFile.name);
-    options.name ??= githubContext.payload.release?.name || options.version;
+    if (platform !== PlatformType.GITHUB) {
+        options.name ??= githubContext.payload.release?.name || options.version;
+    }
     options.changelog ??= githubContext.payload.release?.body || "";
     options.loaders ??= metadata?.loaders || [];
     options.environment ||= metadata?.environment;
