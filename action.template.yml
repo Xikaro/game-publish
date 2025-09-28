@@ -1,8 +1,8 @@
 # TODO: Remove deprecated inputs in v4.0
 
-name: mc-publish
+name: game-publish
 description: Your one-stop GitHub Action for seamless Minecraft project publication across various platforms.
-author: Kir-Antipov
+author: Xikaro
 branding:
   color: purple
   icon: box

@@ -1,6 +1,6 @@
 # Security Notice
 
-This is the security notice for the [mc-publish](https://github.com/Kir-Antipov/mc-publish) repository. The notice explains how and when vulnerabilities should be reported.
+This is the security notice for the [game-publish](https://github.com/Xikaro/game-publish) repository. The notice explains how and when vulnerabilities should be reported.
 
 This notice is applicable to the latest release of the project. If you are using an outdated version, please upgrade to the latest release before reporting any issues.
 

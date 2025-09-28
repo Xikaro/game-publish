@@ -215,7 +215,7 @@ export class CurseForgeUploadApiClient {
             // These ids are used by: `Bukkit Plugins`.
             //
             // While there's only one category that uses this type of ids,
-            // it's safe to say that users of `mc-publish` are most likely
+            // it's safe to say that users of `game-publish` are most likely
             // to publish plugins with it, rather than addons.
             pluginGameVersionIds,
 

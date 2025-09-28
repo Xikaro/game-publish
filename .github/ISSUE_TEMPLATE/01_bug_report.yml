@@ -32,7 +32,7 @@ body:
     id: version
     attributes:
       label: Version
-      description: Specify the version of mc-publish you are currently using.
+      description: Specify the version of game-publish you are currently using.
       placeholder: |
         Please make sure to upgrade to the latest release before opening an issue.
     validations:
@@ -42,7 +42,7 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Specify the environment where you are using mc-publish.
+      description: Specify the environment where you are using game-publish.
       multiple: false
       default: 0
       options:
@@ -73,7 +73,7 @@ body:
               # Build artifacts...
 
               - name: Publish assets to GitHub, Modrinth, and CurseForge
-                uses: Kir-Antipov/mc-publish@v4.0
+                uses: Xikaro/game-publish@v4.0
                 with:
                   name: ""
                   modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -89,7 +89,7 @@ body:
       label: Logs
       description: Copy and paste the relevant logs, if applicable.
       placeholder: |
-        Run Kir-Antipov/mc-publish@v4.0
+        Run Xikaro/game-publish@v4.0
         with:
           modrinth-id: AAAAAAAA
           modrinth-token: ***

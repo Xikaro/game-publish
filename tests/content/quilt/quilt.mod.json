@@ -46,7 +46,7 @@
       {
         "id": "suggested-mod",
         "optional": true,
-        "mc-publish": {
+        "game-publish": {
           "modrinth": "BBBB",
           "curseforge": 43,
           "github": "v0.3.0",
@@ -70,7 +70,7 @@
   "minecraft": {
     "environment": "*"
   },
-  "mc-publish": {
+  "game-publish": {
     "github": "mc1.18-0.4.0-alpha5",
     "curseforge": 394468,
     "modrinth": "AANobbMI",

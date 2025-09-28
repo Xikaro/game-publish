@@ -8,10 +8,10 @@
 # action.template.yml file instead. This will ensure that your changes are #
 #              properly reflected in the auto-generated file.              #
 # ######################################################################## #
-name: mc-publish
+name: game-publish
 description: Your one-stop GitHub Action for seamless Minecraft project
   publication across various platforms.
-author: Kir-Antipov
+author: Xikaro
 branding:
   color: purple
   icon: box
@@ -73,6 +73,10 @@ inputs:
     default: ${undefined}
   github-token:
     description: Your GitHub API token.
+    required: false
+    default: ${undefined}
+  github-name:
+    description: The name of the version.
     required: false
     default: ${undefined}
   files:
@@ -196,10 +200,6 @@ inputs:
     required: false
     default: ${undefined}
   curseforge-name:
-    description: The name of the version.
-    required: false
-    default: ${undefined}
-  github-name:
     description: The name of the version.
     required: false
     default: ${undefined}

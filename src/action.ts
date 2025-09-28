@@ -22,7 +22,7 @@ import { UploadedFile } from "@/platforms/uploaded-file";
 /**
  * Your one-stop GitHub Action for seamless Minecraft project publication across various platforms.
  */
-export const ACTION_NAME = "mc-publish";
+export const ACTION_NAME = "game-publish";
 
 /**
  * The input parameters for the action.
@@ -238,14 +238,14 @@ export interface McPublishInput {
         token?: SecureString;
 
         /**
-         * An array of globs determining which files to upload.
-         */
-        files?: FileInfo[];
-
-        /**
          * The name of the version.
          */
         name?: string;
+
+        /**
+         * An array of globs determining which files to upload.
+         */
+        files?: FileInfo[];
 
         /**
          * The version number.

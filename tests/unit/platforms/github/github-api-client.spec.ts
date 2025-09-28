@@ -133,7 +133,7 @@ describe("GitHubApiClient", () => {
             const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
             const expectedRelease = DB.releases.find(x => x.id === 135474639);
 
-            const release = await api.getRelease({ owner: "Kir-Antipov", repo: "packed-inventory", id: expectedRelease.id });
+            const release = await api.getRelease({ owner: "Xikaro", repo: "packed-inventory", id: expectedRelease.id });
 
             expect(release).toBeDefined();
             expect(release).toEqual(expectedRelease);
@@ -142,7 +142,7 @@ describe("GitHubApiClient", () => {
         test("returns undefined if release with the specified id doesn't exist", async () => {
             const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
 
-            const release = await api.getRelease({ owner: "Kir-Antipov", repo: "packed-inventory", id: -42 });
+            const release = await api.getRelease({ owner: "Xikaro", repo: "packed-inventory", id: -42 });
 
             expect(release).toBeUndefined();
         });
@@ -151,7 +151,7 @@ describe("GitHubApiClient", () => {
             const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
             const expectedRelease = DB.releases.find(x => x.id === 135474639);
 
-            const release = await api.getRelease({ owner: "Kir-Antipov", repo: "packed-inventory", tag_name: expectedRelease.tag_name });
+            const release = await api.getRelease({ owner: "Xikaro", repo: "packed-inventory", tag_name: expectedRelease.tag_name });
 
             expect(release).toBeDefined();
             expect(release).toEqual(expectedRelease);
@@ -161,7 +161,7 @@ describe("GitHubApiClient", () => {
         test("returns undefined if release with the specified tagname doesn't exist", async () => {
             const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
 
-            const release = await api.getRelease({ owner: "Kir-Antipov", repo: "packed-inventory", tag_name: "foo" });
+            const release = await api.getRelease({ owner: "Xikaro", repo: "packed-inventory", tag_name: "foo" });
 
             expect(release).toBeUndefined();
         });
@@ -173,7 +173,7 @@ describe("GitHubApiClient", () => {
             const expectedRelease = DB.releases.find(x => x.id === 135474639);
 
             const release = await api.createRelease({
-                owner: "Kir-Antipov",
+                owner: "Xikaro",
                 repo: "packed-inventory",
                 tag_name: expectedRelease.tag_name,
                 body: expectedRelease.body,
@@ -196,7 +196,7 @@ describe("GitHubApiClient", () => {
 
             const release = await api.updateRelease({
                 id: expectedRelease.id,
-                owner: "Kir-Antipov",
+                owner: "Xikaro",
                 repo: "packed-inventory",
                 tag_name: expectedRelease.tag_name,
                 body: expectedRelease.body,
@@ -219,7 +219,7 @@ describe("GitHubApiClient", () => {
 
             const assets = await api.updateReleaseAssets({
                 id: expectedRelease.id,
-                owner: "Kir-Antipov",
+                owner: "Xikaro",
                 repo: "packed-inventory",
                 assets: expectedRelease.assets.map(x => x.name),
             });
@@ -233,7 +233,7 @@ describe("GitHubApiClient", () => {
         test("returns true if the specified asset was successfully deleted", async () => {
             const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
 
-            const success = await api.deleteReleaseAsset({ owner: "Kir-Antipov", repo: "packed-inventory", id: 143275772 });
+            const success = await api.deleteReleaseAsset({ owner: "Xikaro", repo: "packed-inventory", id: 143275772 });
 
             expect(success).toBe(true);
         });
@@ -241,7 +241,7 @@ describe("GitHubApiClient", () => {
         test("returns false if the specified asset doesn't exist", async () => {
             const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
 
-            const success = await api.deleteReleaseAsset({ owner: "Kir-Antipov", repo: "packed-inventory", id: -42 });
+            const success = await api.deleteReleaseAsset({ owner: "Xikaro", repo: "packed-inventory", id: -42 });
 
             expect(success).toBe(false);
         });

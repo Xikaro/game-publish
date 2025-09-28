@@ -26,7 +26,7 @@ body:
     attributes:
       label: Risks
       description: Please mention any risks that, to your knowledge, this proposal might entail, such as unnecessary complexity growth, breaking changes, performance regressions, etc.
-      placeholder: This proposal adds a few more inputs to the mc-publish scheme, bringing their total number to 457, which might be a little bit confusing for the end user.
+      placeholder: This proposal adds a few more inputs to the game-publish scheme, bringing their total number to 457, which might be a little bit confusing for the end user.
     validations:
       required: true
 

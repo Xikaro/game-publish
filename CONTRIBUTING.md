@@ -1,6 +1,6 @@
-# Contributing to mc-publish
+# Contributing to game-publish
 
-Thank you for considering contributing to mc-publish! We value and appreciate any contributions from the community.
+Thank you for considering contributing to game-publish! We value and appreciate any contributions from the community.
 
 Simply filing issues for problems you encounter is already a great way to contribute. Further contributions in the form of implementing solutions or fixes via PRs are even more greatly appreciated.
 
@@ -10,7 +10,7 @@ We always welcome bug reports, enhancement proposals, and overall feedback. Here
 
 ### Finding Existing Issues
 
-Before filing a new issue, please search our [open issues](https://github.com/Kir-Antipov/mc-publish/issues) to see if it already exists.
+Before filing a new issue, please search our [open issues](https://github.com/Xikaro/game-publish/issues) to see if it already exists.
 
 If you come across an existing issue, please provide your own feedback in the discussion. Consider upvoting *(👍 reaction)* the original post, so we can quickly identify which problems and proposals are most urgent to address.
 
@@ -18,11 +18,11 @@ If you come across an existing issue, please provide your own feedback in the di
 
 Firstly, think through all the pros and cons of your idea and whether it's viable for the project. Ideally, a proposal should align with the following criteria:
 
- - The proposed changes should not stray from the project's original goal - automated publishing of prepared Minecraft-related assets to different platforms. While it might seem enticing to enable mc-publish to automatically build your mod or plugin for you, or to have it send a message in a Discord chat announcing that your project has been updated, such functionalities are best handled by other tools.
+ - The proposed changes should not stray from the project's original goal - automated publishing of prepared Minecraft-related assets to different platforms. While it might seem enticing to enable game-publish to automatically build your mod or plugin for you, or to have it send a message in a Discord chat announcing that your project has been updated, such functionalities are best handled by other tools.
  - New input suggestions are generally discouraged. Like the previous point, this one aims to maintain the project's complexity at a balanced level, so users don't require immense understanding to navigate a GitHub Action stuffed with countless options. However, this is not a hard and fast rule and should be evaluated on a per-scenario basis.
- - The proposed changes shouldn't alter the current behavior of the action. Thousands of different projects rely on mc-publish, and we don't want to accidentally break anything they heavily depend on. Nevertheless, some breaking changes may actually enhance the project, so if you believe your suggestion falls under this category, don't hesitate to suggest it. We can then discuss how to transition our users to the new behavior as smoothly and painlessly as possible.
+ - The proposed changes shouldn't alter the current behavior of the action. Thousands of different projects rely on game-publish, and we don't want to accidentally break anything they heavily depend on. Nevertheless, some breaking changes may actually enhance the project, so if you believe your suggestion falls under this category, don't hesitate to suggest it. We can then discuss how to transition our users to the new behavior as smoothly and painlessly as possible.
 
-When you are ready to submit a proposal, please use the [Enhancement issue template](https://github.com/Kir-Antipov/mc-publish/issues/new?template=02_enhancement.yml) if you are suggesting an enhancement to pre-existing features, or the [Feature Request issue template](https://github.com/Kir-Antipov/mc-publish/issues/new?template=03_feature_request.yml) if you are proposing a new one.
+When you are ready to submit a proposal, please use the [Enhancement issue template](https://github.com/Xikaro/game-publish/issues/new?template=02_enhancement.yml) if you are suggesting an enhancement to pre-existing features, or the [Feature Request issue template](https://github.com/Xikaro/game-publish/issues/new?template=03_feature_request.yml) if you are proposing a new one.
 
 ### Writing a Good Bug Report
 
@@ -31,10 +31,10 @@ Good bug reports make it easier for maintainers to quickly verify and find the r
  - A detailed high-level description of the problem.
  - A *minimal reproduction*, i.e., the smallest configuration needed to reproduce the incorrect behavior.
  - A description of the *expected behavior*, contrasted with the *actual behavior* observed.
- - Information about the environment: mc-publish version, the operating system on which it was run, etc.
+ - Information about the environment: game-publish version, the operating system on which it was run, etc.
  - Any additional information, e.g., is the issue a regression from previous versions? Are there any known workarounds? Etc.
 
-When you are ready to submit a bug report, please use the [Bug Report issue template](https://github.com/Kir-Antipov/mc-publish/issues/new?template=01_bug_report.yml).
+When you are ready to submit a bug report, please use the [Bug Report issue template](https://github.com/Xikaro/game-publish/issues/new?template=01_bug_report.yml).
 
 ## Contributing Changes
 
@@ -81,7 +81,7 @@ We recommend the following workflow:
 7. Build the repository with your changes.
     - Run `npm run build` and ensure the build process is successful.
     - Run `npm run test` and verify that all tests, including your new ones, pass.
-8. Create a pull request (PR) against the `Kir-Antipov/mc-publish` repository's `dev` branch.
+8. Create a pull request (PR) against the `Xikaro/game-publish` repository's `dev` branch.
     - Clearly state in the description what issue or improvement your change addresses.
     - Ensure all Continuous Integration checks are passing.
 9. Await feedback or approval of your changes from the maintainers.

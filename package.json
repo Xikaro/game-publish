@@ -1,6 +1,6 @@
 {
-  "name": "mc-publish",
-  "version": "3.3.0",
+  "name": "game-publish",
+  "version": "3.3.1",
   "description": "GitHub Action that helps you publish your Minecraft mods",
   "main": "src/index.ts",
   "type": "module",
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Kir-Antipov/mc-publish.git"
+    "url": "git+https://github.com/Xikaro/game-publish.git"
   },
   "keywords": [
     "github",
@@ -27,12 +27,12 @@
     "minecraft-mod",
     "publish"
   ],
-  "author": "Kir-Antipov",
+  "author": "Xikaro",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Kir-Antipov/mc-publish/issues"
+    "url": "https://github.com/Xikaro/game-publish/issues"
   },
-  "homepage": "https://github.com/Kir-Antipov/mc-publish#readme",
+  "homepage": "https://github.com/Xikaro/game-publish#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.23.8",
     "@types/jest": "^29.5.11",

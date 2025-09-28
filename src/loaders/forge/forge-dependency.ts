@@ -198,9 +198,9 @@ function _getLegacyForgeDependencyCustomPayload(dependency: ForgeDependency): Fo
  *
  * @deprecated
  *
- * Define `mc-publish` property directly on your Forge dependency object instead of using nested `custom.mc-publish`.
+ * Define `game-publish` property directly on your Forge dependency object instead of using nested `custom.game-publish`.
  */
 const getLegacyForgeDependencyCustomPayload = deprecate(
     _getLegacyForgeDependencyCustomPayload,
-    "Define `mc-publish` property directly on your Forge dependency object instead of using nested `custom.mc-publish`.",
+    "Define `game-publish` property directly on your Forge dependency object instead of using nested `custom.game-publish`.",
 );

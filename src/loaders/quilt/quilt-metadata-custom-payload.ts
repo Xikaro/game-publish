@@ -71,11 +71,11 @@ function _getLegacyQuiltMetadataCustomPayload(metadata: RawQuiltMetadata): Quilt
  *
  * @deprecated
  *
- * Use top-level `mc-publish` field in your mod metadata.
+ * Use top-level `game-publish` field in your mod metadata.
  */
 const getLegacyQuiltMetadataCustomPayload = deprecate(
     _getLegacyQuiltMetadataCustomPayload,
-    "Use top-level `mc-publish` field in your quilt.mod.json.",
+    "Use top-level `game-publish` field in your quilt.mod.json.",
 );
 
 /**

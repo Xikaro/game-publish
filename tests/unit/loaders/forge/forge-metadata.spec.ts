@@ -48,8 +48,8 @@ describe("ForgeMetadata", () => {
         test("returns 'forge' by default", () => {
             const rawWithoutLoadersField = {
                 ...RAW_METADATA,
-                "mc-publish": {
-                    ...RAW_METADATA["mc-publish"],
+                "game-publish": {
+                    ...RAW_METADATA["game-publish"],
                     loaders: undefined,
                 },
             };

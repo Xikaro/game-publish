@@ -1,8 +1,8 @@
-## mc-publish
+## game-publish
 
-[![GitHub tag](https://img.shields.io/github/tag/Kir-Antipov/mc-publish.svg)](https://github.com/Kir-Antipov/mc-publish/releases/latest)
-[![GitHub build status](https://img.shields.io/github/actions/workflow/status/Kir-Antipov/mc-publish/ci.yml?branch=master)](https://github.com/Kir-Antipov/mc-publish/actions/workflows/ci.yml)
-[![GitHub license](https://img.shields.io/github/license/Kir-Antipov/mc-publish.svg?cacheSeconds=36000)](https://github.com/Kir-Antipov/mc-publish#readme)
+[![GitHub tag](https://img.shields.io/github/tag/Xikaro/game-publish.svg)](https://github.com/Xikaro/game-publish/releases/latest)
+[![GitHub build status](https://img.shields.io/github/actions/workflow/status/Xikaro/game-publish/ci.yml?branch=master)](https://github.com/Xikaro/game-publish/actions/workflows/ci.yml)
+[![GitHub license](https://img.shields.io/github/license/Xikaro/game-publish.svg?cacheSeconds=36000)](https://github.com/Xikaro/game-publish#readme)
 
 A versatile GitHub Action to streamline the publication of Minecraft projects.
 
@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: Kir-Antipov/mc-publish@v3.3
+      - uses: Xikaro/game-publish@v3.3
         with:
           # Only include this section if you wish to publish
           # your assets on Modrinth.
@@ -38,7 +38,7 @@ jobs:
 
 ### 📘 Advanced Usage
 
-The following verbose example is for illustrative purposes only and is not recommended for regular use. `mc-publish` was designed to require minimal configuration, so there's no need for all of these settings.
+The following verbose example is for illustrative purposes only and is not recommended for regular use. `game-publish` was designed to require minimal configuration, so there's no need for all of these settings.
 
 Overly complex configurations with hardcoded values that could be resolved automatically not only complicate your workflow but can also introduce errors. For example, attempting to use `github-discussion: Announcements` in a repository that doesn't have a "Announcements" discussion category or discussions in general would lead to problems.
 
@@ -51,7 +51,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: Kir-Antipov/mc-publish@v3.3
+      - uses: Xikaro/game-publish@v3.3
         with:
           modrinth-id: AANobbMI
           modrinth-featured: true
@@ -136,7 +136,7 @@ jobs:
 | [retry-delay](#retry-delay)                             | Specifies the delay (in milliseconds) between asset publishing attempts.                                                                          | `10000`                                                                                         | `1000` <br> `60000` <br> `0`                                               |
 | [fail-mode](#fail-mode)                                 | Controls how the action responds to errors during the mod publishing process.                                                                     | `fail`                                                                                          | `fail` <br> `warn` <br> `skip`                                             |
 
-Please note that any top-level property *(`name`, `version`, `dependencies`, `files`, etc.)* can be used as a target-specific one. This allows you to customize `mc-publish` to better meet your individual preferences and requirements. To illustrate, let's take a look at the following configuration:
+Please note that any top-level property *(`name`, `version`, `dependencies`, `files`, etc.)* can be used as a target-specific one. This allows you to customize `game-publish` to better meet your individual preferences and requirements. To illustrate, let's take a look at the following configuration:
 
 ```yaml
 # Shared top-level properties
@@ -177,12 +177,12 @@ Can be automatically retrieved from the metadata file of your project:
 
 - `fabric.mod.json` (Fabric)
 
-  - Custom `mc-publish` field:
+  - Custom `game-publish` field:
       ```json
       {
         // ...
         "custom": {
-          "mc-publish": {
+          "game-publish": {
             "modrinth": "AANobbMI"
           }
         }
@@ -191,20 +191,20 @@ Can be automatically retrieved from the metadata file of your project:
 
 - `mods.toml` (Forge)
 
-  - Custom `mc-publish` field:
+  - Custom `game-publish` field:
       ```toml
       # ...
-      [mc-publish]
+      [game-publish]
           modrinth="AANobbMI"
       ```
 
 - `quilt.mod.json` (Quilt)
 
-  - Custom `mc-publish` field:
+  - Custom `game-publish` field:
       ```json
       {
         // ...
-        "mc-publish": {
+        "game-publish": {
           "modrinth": "AANobbMI"
         }
       }
@@ -265,12 +265,12 @@ Can be automatically retrieved from the metadata file of your project:
 
 - `fabric.mod.json` (Fabric)
 
-  - Custom `mc-publish` field:
+  - Custom `game-publish` field:
       ```json
       {
         // ...
         "custom": {
-          "mc-publish": {
+          "game-publish": {
             "curseforge": 394468
           }
         }
@@ -279,20 +279,20 @@ Can be automatically retrieved from the metadata file of your project:
 
 - `mods.toml` (Forge)
 
-  - Custom `mc-publish` field:
+  - Custom `game-publish` field:
       ```toml
       # ...
-      [mc-publish]
+      [game-publish]
           curseforge=394468
       ```
 
 - `quilt.mod.json` (Quilt)
 
-  - Custom `mc-publish` field:
+  - Custom `game-publish` field:
       ```json
       {
         // ...
-        "mc-publish": {
+        "game-publish": {
           "curseforge": 394468
         }
       }
@@ -423,7 +423,7 @@ Fabric mods can be marked as Quilt-compatible like so:
   {
     // ...
     "custom": {
-      "mc-publish": {
+      "game-publish": {
         "loaders": ["fabric", "quilt"]
       }
     }
@@ -441,7 +441,7 @@ loaders: |
 
 #### game-versions
 
-An array of supported Minecraft versions. By default, `mc-publish` will look for `minecraft` dependency in your project's metadata file (e.g., `fabric.mod.json`, `mods.toml`, `quilt.mod.json`, etc.).
+An array of supported Minecraft versions. By default, `game-publish` will look for `minecraft` dependency in your project's metadata file (e.g., `fabric.mod.json`, `mods.toml`, `quilt.mod.json`, etc.).
 
 ```yaml
 game-versions: |
@@ -494,7 +494,7 @@ Example of work of each individual filter for `>=1.17 <=1.18` version range:
 
 #### dependencies
 
-An array of dependencies required by your project. By default, `mc-publish` will take them from your project's metadata file.
+An array of dependencies required by your project. By default, `game-publish` will take them from your project's metadata file.
 
 ```yaml
 dependencies: |
@@ -538,7 +538,7 @@ Can be automatically retrieved from your project's metadata file:
     "incompatible-dependency": "*"
   },
   "custom": {
-    "mc-publish": {
+    "game-publish": {
       // This dependency declaration will be merged with everything written above.
       // It's useful if you want to provide information about dependency types not supported by Fabric.
       // Or if you want to attach platform-specific aliases to one of the dependencies above.
@@ -573,8 +573,8 @@ Can be automatically retrieved from your project's metadata file:
     versionRange="0.3.0"
     ordering="NONE"
     side="BOTH"
-    [dependencies.mod-id.mc-publish]
-        ignore=false # `mc-publish` will ignore this dependency, if `ignore` is set to true
+    [dependencies.mod-id.game-publish]
+        ignore=false # `game-publish` will ignore this dependency, if `ignore` is set to true
         modrinth="embedded-dependency-forge" # Modrinth's project slug
         curseforge="embedded-dependency-forge" # CurseForge's project slug
 
@@ -586,7 +586,7 @@ Can be automatically retrieved from your project's metadata file:
     ordering="NONE"
     side="BOTH"
 
-  [mc-publish]
+  [game-publish]
     # This dependency declaration will be merged with everything written above.
     # It's useful if you want to provide information about dependency types not supported by Forge.
     # Or if you want to attach platform-specific aliases to one of the dependencies above.
@@ -611,8 +611,8 @@ Can be automatically retrieved from your project's metadata file:
     {
       "id": "embedded-dependency",
       "version": "0.3.0",
-      "mc-publish": {
-        "ignore": false, // `mc-publish` will ignore this dependency, if `ignore` is set to true
+      "game-publish": {
+        "ignore": false, // `game-publish` will ignore this dependency, if `ignore` is set to true
         "modrinth": "embedded-dependency-quilt", // Modrinth's project slug
         "curseforge": "embedded-dependency-quilt" // CurseForge's project slug
       }
@@ -632,7 +632,7 @@ Can be automatically retrieved from your project's metadata file:
 
   // ...
   // Back to top-level ./
-  "mc-publish": {
+  "game-publish": {
     // This dependency declaration will be merged with everything written above.
     // It's useful if you want to provide information about dependency types not supported by Quilt.
     // Or if you want to attach platform-specific aliases to one of the dependencies above.

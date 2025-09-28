@@ -71,11 +71,11 @@ function _getLegacyForgeMetadataCustomPayload(metadata: RawForgeMetadata): Forge
  *
  * @deprecated
  *
- * Use top-level `mc-publish` field in your mod metadata.
+ * Use top-level `game-publish` field in your mod metadata.
  */
 const getLegacyForgeMetadataCustomPayload = deprecate(
     _getLegacyForgeMetadataCustomPayload,
-    "Use top-level `mc-publish` field in your mods.toml.",
+    "Use top-level `game-publish` field in your mods.toml.",
 );
 
 /**
