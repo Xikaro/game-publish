@@ -301,7 +301,7 @@ async function parseInput(value: string, type: ActionParameterTypeDescriptor, mo
  * @returns A promise that resolves to the parsed input values.
  */
 async function parseMultipleInputs(value: string, type: ActionParameterTypeDescriptor, moduleLoader: ModuleLoader, converter: Converter): Promise<unknown> {
-    const separator = type.options?.getRegExp(ActionParameterFactoryOptions.SEPARATOR) ?? /\r?\n/g;
+    const separator = type.options?.getRegExp(ActionParameterFactoryOptions.SEPARATOR) ?? /[\r\n,]+/g;
     const processSeparately = type.options?.getBoolean(ActionParameterFactoryOptions.PROCESS_SEPARATELY) ?? true;
     const trimEntries = type.options?.getBoolean(ActionParameterFactoryOptions.TRIM_ENTRIES) ?? true;
     const removeEmptyEntries = type.options?.getBoolean(ActionParameterFactoryOptions.REMOVE_EMPTY_ENTRIES) ?? true;
