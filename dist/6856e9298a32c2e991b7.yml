@@ -169,12 +169,12 @@ inputs:
     required: false
     default: ${undefined}
   loaders:
-    type: string[]?separator=/\s%2B/
+    type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported mod loaders.
     required: false
     default: ${undefined}
   game-versions:
-    type: string[]
+    type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported Minecraft versions.
     required: false
     default: ${undefined}
@@ -347,32 +347,32 @@ inputs:
     required: false
     default: ${undefined}
   modrinth-loaders:
-    type: string[]?separator=/\s%2B/
+    type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported mod loaders.
     required: false
     default: ${undefined}
   curseforge-loaders:
-    type: string[]?separator=/\s%2B/
+    type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported mod loaders.
     required: false
     default: ${undefined}
   github-loaders:
-    type: string[]?separator=/\s%2B/
+    type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported mod loaders.
     required: false
     default: ${undefined}
   modrinth-game-versions:
-    type: string[]
+    type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported Minecraft versions.
     required: false
     default: ${undefined}
   curseforge-game-versions:
-    type: string[]
+    type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported Minecraft versions.
     required: false
     default: ${undefined}
   github-game-versions:
-    type: string[]
+    type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported Minecraft versions.
     required: false
     default: ${undefined}

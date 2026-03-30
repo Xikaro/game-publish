@@ -120,10 +120,10 @@ inputs:
     description: A glob pointing to the changelog file.
 
   loaders:
-    type: string[]?separator=/\s%2B/
+    type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported mod loaders.
   game-versions:
-    type: string[]
+    type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported Minecraft versions.
   dependencies:
     type: dependencies.Dependency[]
