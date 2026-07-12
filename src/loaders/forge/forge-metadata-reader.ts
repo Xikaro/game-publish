@@ -16,8 +16,8 @@ export class ForgeMetadataReader implements LoaderMetadataReader<ForgeMetadata> 
     async readMetadataFile(path: PathLike): Promise<ForgeMetadata> {
         const metadataText = await readAllZippedText(path, MODS_TOML);
         const metadata = ForgeMetadata.from(parseToml(metadataText));
-        if (!metadata.dependencies.some(x => x.id === LoaderType.FORGE)) {
-            throw new Error("A Forge metadata file must contain a 'forge' dependency");
+        if (metadata.dependencies.some(x => x.id === LoaderType.NEOFORGE)) {
+            throw new Error("A Forge metadata file cannot contain a 'neoforge' dependency");
         }
 
         return metadata;

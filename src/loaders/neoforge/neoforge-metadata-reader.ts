@@ -14,15 +14,18 @@ export class NeoForgeMetadataReader implements LoaderMetadataReader<NeoForgeMeta
      * @inheritdoc
      */
     async readMetadataFile(path: PathLike): Promise<NeoForgeMetadata> {
-        // Prefer `neoforge.mods.toml` over `mods.toml`.
-        const metadataText = await readAllZippedText(path, NEOFORGE_MODS_TOML)
-            .catch(() => readAllZippedText(path, MODS_TOML));
+        try {
+            // Prefer `neoforge.mods.toml` over `mods.toml`.
+            const metadataText = await readAllZippedText(path, NEOFORGE_MODS_TOML);
+            return NeoForgeMetadata.from(parseToml(metadataText));
+        } catch {
+            const metadataText = await readAllZippedText(path, MODS_TOML);
+            const metadata = NeoForgeMetadata.from(parseToml(metadataText));
+            if (metadata.dependencies.some(x => x.id === LoaderType.FORGE)) {
+                throw new Error("A NeoForge metadata file cannot contain a 'forge' dependency");
+            }
 
-        const metadata = NeoForgeMetadata.from(parseToml(metadataText));
-        if (!metadata.dependencies.some(x => x.id === LoaderType.NEOFORGE)) {
-            throw new Error("A NeoForge metadata file must contain a 'neoforge' dependency");
+            return metadata;
         }
-
-        return metadata;
     }
 }
