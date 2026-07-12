@@ -3,6 +3,7 @@ import { VersionRange, parseVersion } from "@/utils/versioning";
 import { $i } from "@/utils/collections";
 import { MinecraftVersion, MinecraftVersionManifest, getMinecraftVersionManifestEntries } from "./minecraft-version";
 import { getMinecraftVersionRegExp, normalizeMinecraftVersion, normalizeMinecraftVersionRange } from "./minecraft-version-lookup";
+import { retry } from "@/utils/async-utils";
 
 /**
  * The default base URL for the Mojang API.
@@ -101,7 +102,7 @@ export class MojangApiClient {
             return this._versions;
         }
 
-        const response = await this._fetch("/game/version_manifest_v2.json");
+        const response = await retry(() => this._fetch("/game/version_manifest_v2.json"), { maxAttempts: 8, delay: 12500 });
         const manifest = await response.json<MinecraftVersionManifest>();
         const manifestEntries = getMinecraftVersionManifestEntries(manifest);
 
