@@ -28,11 +28,11 @@ export interface CurseForgeGameVersion {
 }
 
 /**
- * An equality comparer that compares two game version names ignoring the "-Snapshot" suffix.
+ * An equality comparer that compares two game version names ignoring the "-Snapshot" suffix and the "Beta" prefix.
  */
 export const CURSEFORGE_GAME_VERSION_SNAPSHOT_NAME_COMPARER: EqualityComparer<string> = (a, b) => {
-    const aVersion = a?.replace("-Snapshot", "");
-    const bVersion = b?.replace("-Snapshot", "");
+    const aVersion = a?.replaceAll(/(?:^Beta )|(?:-Snapshot$)/g, "");
+    const bVersion = b?.replaceAll(/(?:^Beta )|(?:-Snapshot$)/g, "");
 
     return aVersion === bVersion;
 };
@@ -96,5 +96,5 @@ export function formatCurseForgeGameVersion(gameVersion: GameVersion): string {
  * @returns A formatted string representing the game version.
  */
 export function formatCurseForgeGameVersionSnapshot(gameVersion: GameVersion): string {
-    return `${gameVersion.version.major}.${gameVersion.version.minor}${gameVersion.version.patch ? `.${gameVersion.version.patch}` : ""}${gameVersion.isSnapshot ? "-Snapshot" : ""}`;
+    return /^b\d/.test(gameVersion.id) ? `Beta ${gameVersion.id.substring(1)}` : `${gameVersion.version.major}.${gameVersion.version.minor}${gameVersion.version.patch ? `.${gameVersion.version.patch}` : ""}${gameVersion.isSnapshot ? "-Snapshot" : ""}`;
 }

@@ -107,6 +107,7 @@ describe("findCurseForgeGameVersionIdsByNames", () => {
         { id: 2, name: "1.17.1" },
         { id: 3, name: "1.18-Snapshot" },
         { id: 4, name: "CB 1.4.6-R0.1" },
+        { id: 5, name: "Beta 1.6.6" },
     ]) as unknown[] as CurseForgeGameVersion[];
 
     test("returns the correct IDs when using the default comparer", () => {
@@ -119,8 +120,8 @@ describe("findCurseForgeGameVersionIdsByNames", () => {
     });
 
     test("returns the correct IDs when using a custom comparer", () => {
-        const names = ["1.18"];
-        const ids = [3];
+        const names = ["1.18", "1.6.6"];
+        const ids = [3, 5];
 
         const result = findCurseForgeGameVersionIdsByNames(versions, names, CURSEFORGE_GAME_VERSION_SNAPSHOT_NAME_COMPARER);
 
@@ -208,6 +209,16 @@ describe("formatCurseForgeGameVersionSnapshot", () => {
         } as GameVersion;
 
         const expected = "1.18-Snapshot";
+
+        const result = formatCurseForgeGameVersionSnapshot(gameVersion);
+
+        expect(result).toEqual(expected);
+    });
+
+    test("formats the game version correctly when it's a beta version", () => {
+        const gameVersion = { id: "b1.6.6" } as GameVersion;
+
+        const expected = "Beta 1.6.6";
 
         const result = formatCurseForgeGameVersionSnapshot(gameVersion);
 
