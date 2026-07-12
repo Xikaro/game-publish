@@ -10,7 +10,7 @@ import { MinecraftVersionType } from "./minecraft-version-type";
  */
 const VERSION_PATTERN = (
     "0\\.\\d+(?:\\.\\d+)?a?(?:_\\d+)?|" +
-    "\\d+\\.\\d+(?:\\.\\d+)?(?:-pre\\d+| Pre-[Rr]elease \\d+|-rc\\d+| [Rr]elease Candidate \\d+)?|" +
+    "\\d+\\.(?:\\d+|RV)(?:\\.\\d+)?(?:-[Pp]re\\d+| Pre-[Rr]elease \\d+|-rc\\d+| [Rr]elease Candidate \\d+)?|" +
     "\\d+w\\d+(?:[a-z]+|~)|" +
     "[a-c]\\d\\.\\d+(?:\\.\\d+)?[a-z]?(?:_\\d+)?[a-z]?|" +
     "(Alpha|Beta) v?\\d+\\.\\d+(?:\\.\\d+)?[a-z]?(?:_\\d+)?[a-z]?|" +
@@ -32,7 +32,7 @@ const RELEASE_REGEX = /\d+\.\d+(\.\d+)?/;
 /**
  * Regular expression for matching and validating pre-release Minecraft versions.
  */
-const PRE_RELEASE_REGEX = /.+(?:-pre| Pre-[Rr]elease )(\d+)/;
+const PRE_RELEASE_REGEX = /.+(?:-[Pp]re| Pre-[Rr]elease )(\d+)/;
 
 /**
  * Regular expression for matching and validating release candidate Minecraft versions.
@@ -99,6 +99,9 @@ const SPECIAL_VERSIONS: ReadonlyMap<string, string> = new Map([
     ["1.16_combat-6", "1.16.3-combat.8.c"],
     ["22w13oneblockatatime", "1.19-alpha.22.13.oneblockatatime"],
     ["23w13a_or_b", "1.20-alpha.23.13.ab"],
+    ["24w14potato", "1.20.5-alpha.24.12.potato"],
+    ["25w14craftmine", "1.21.6-alpha.25.14.craftmine"],
+    ["26w14a", "26.1.1-alpha.26.14.a"],
 ]);
 
 /**
@@ -375,7 +378,7 @@ function findNearestReleaseMinecraftVersion(versions: MinecraftVersionManifestEn
  * https://github.com/FabricMC/fabric-loader/blob/HEAD/minecraft/src/main/java/net/fabricmc/loader/impl/game/minecraft/McVersionLookup.java#L267
  */
 function findNearestReleaseMinecraftVersionBySnapshotDate(year: number, week: number) : string | undefined {
-    if (year === 23 && week >= 12) {
+    if (year === 23 && week >= 12 && week <= 18) {
         return "1.20";
     }
 
