@@ -12,6 +12,8 @@ describe("VersionType", () => {
             expect(VersionType.parseFromFileName("modmenu-2.0.12")).toStrictEqual(VersionType.RELEASE);
             expect(VersionType.parseFromFileName("enhancedblockentities-0.5+1.17")).toStrictEqual(VersionType.RELEASE);
             expect(VersionType.parseFromFileName("sync-mc1.17.x-1.2")).toStrictEqual(VersionType.RELEASE);
+            expect(VersionType.parseFromFileName("PersonalPhantoms-2.1.1")).toStrictEqual(VersionType.RELEASE);
+            expect(VersionType.parseFromFileName("PersonalPhantoms-2.1.1+alpha")).toStrictEqual(VersionType.ALPHA);
         });
     });
 

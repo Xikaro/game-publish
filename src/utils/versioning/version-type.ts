@@ -42,11 +42,11 @@ const VersionTypeOptions: EnumOptions = {
  * @returns The detected {@link VersionType} based on the input file name.
  */
 function parseFromFileName(fileName: string): VersionType {
-    if (fileName.match(/[+-_]alpha/i)) {
+    if (fileName.match(/(?<![a-z])alpha(?![a-z])/ig)) {
         return VersionType.ALPHA;
     }
 
-    if (fileName.match(/[+-_]beta/i)) {
+    if (fileName.match(/(?<![a-z])beta(?![a-z])/ig)) {
         return VersionType.BETA;
     }
 
