@@ -120,7 +120,7 @@ describe("ModrinthUploader", () => {
             expect(report).toEqual({
                 id: "AAAAAAAA",
                 version: "BBBBBBBB",
-                url: "https://modrinth.com/mod/foo/version/1.0.0",
+                url: "https://modrinth.com/mod/foo/version/BBBBBBBB",
                 files: [{
                     id: "sha1",
                     name: "file.txt",
