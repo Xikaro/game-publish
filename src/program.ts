@@ -65,7 +65,7 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
 
     for (const platform of PlatformType.values()) {
         const platformOptions = { ...action.input, ...action.input[platform] };
-        if (!platformOptions?.token) {
+        if (!platformOptions?.token?.unwrap()) {
             continue;
         }
 
