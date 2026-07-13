@@ -1,5 +1,4 @@
 import { createHash, randomBytes } from "node:crypto";
-import { IGNORE_CASE_COMPARER, ORDINAL_COMPARER } from "@/utils/comparison";
 
 /**
  * Returns the input value converted to a string.
@@ -50,7 +49,7 @@ export function isDigit(s: string): boolean {
 /**
  * A regular expression that matches a string consisting of a single letter or digit character.
  */
-export const IS_LETTER_OR_DIGIT_REGEX = /^(?:\p{L}|\d)$/u;
+export const IS_LETTER_OR_DIGIT_REGEX = /^[\p{L}\d]$/u;
 
 /**
  * Checks if the provided string is a single letter or digit.
@@ -129,6 +128,11 @@ export interface StringComparisonOptions {
      * ignoring the case of the strings being compared.
      */
     ignoreCase?: boolean;
+
+    /**
+     * Specifies a regular expression that matches characters to be excluded from the comparison.
+     */
+    ignoredCharacters?: RegExp;
 }
 
 /**
@@ -145,8 +149,102 @@ export interface StringComparisonOptions {
  *  - A value greater than 0 indicates that `left` is greater than `right`.
  */
 export function stringCompare(left: string, right: string, options?: StringComparisonOptions): number {
-    const comparer = options?.ignoreCase ? IGNORE_CASE_COMPARER : ORDINAL_COMPARER;
-    return comparer.compare(left, right);
+    if (left === undefined) {
+        return right === undefined ? 0 : -1;
+    }
+
+    if (left === null) {
+        return right === undefined ? 1 : right === null ? 0 : -1;
+    }
+
+    if (right === undefined || right === null) {
+        return 1;
+    }
+
+    if (options?.ignoredCharacters) {
+        return stringCompareIgnoreCharacters(left, right, options);
+    }
+
+    if (options?.ignoreCase) {
+        return stringCompareIgnoreCase(left, right);
+    }
+
+    return stringCompareOrdinal(left, right);
+}
+
+/**
+ * Compares two strings using ordinal comparison.
+ *
+ * @param left - The first string to compare.
+ * @param right - The second string to compare.
+ *
+ * @returns A value indicating the comparison result.
+ */
+function stringCompareOrdinal(left: string, right: string): number {
+    return left < right ? -1 : left > right ? 1 : 0;
+}
+
+/**
+ * Compares two strings using case-insensitive comparison.
+ *
+ * @param left - The first string to compare.
+ * @param right - The second string to compare.
+ *
+ * @returns A value indicating the comparison result.
+ */
+function stringCompareIgnoreCase(left: string, right: string): number {
+    return left.localeCompare(right, undefined, { sensitivity: "accent" });
+}
+
+/**
+ * Compares two strings while ignoring the characters matched by `options.ignoredCharacters`.
+ *
+ * @param left - The first string to compare.
+ * @param right - The second string to compare.
+ * @param options - Options for comparing strings.
+ *
+ * @returns A value indicating the comparison result.
+ */
+function stringCompareIgnoreCharacters(left: string, right: string, options?: StringComparisonOptions): number {
+    const comparer = options?.ignoreCase ? stringCompareIgnoreCase : stringCompareOrdinal;
+    const ignoredCharacters = options?.ignoredCharacters || /^$/;
+
+    let xI = 0;
+    let yI = 0;
+    while (xI < left.length && yI < right.length) {
+        let xChar = left.charAt(xI);
+        let yChar = right.charAt(yI);
+        if (xChar === yChar) {
+            ++xI;
+            ++yI;
+            continue;
+        }
+
+        while (xI < left.length && ignoredCharacters.test(xChar)) {
+            xChar = left.charAt(++xI);
+        }
+        while (yI < right.length && ignoredCharacters.test(yChar)) {
+            yChar = right.charAt(++yI);
+        }
+        if (xI === left.length || yI === right.length) {
+            return (left.length - xI) - (right.length - yI);
+        }
+
+        const diff = comparer(xChar, yChar);
+        if (diff !== 0) {
+            return diff;
+        }
+        ++xI;
+        ++yI;
+    }
+
+    while (xI < left.length && ignoredCharacters.test(left.charAt(xI))) {
+        ++xI;
+    }
+    while (yI < right.length && ignoredCharacters.test(right.charAt(yI))) {
+        ++yI;
+    }
+    return (left.length - xI) - (right.length - yI);
 }
 
 /**

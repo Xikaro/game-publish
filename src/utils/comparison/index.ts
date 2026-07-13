@@ -12,6 +12,8 @@ export {
 export {
     ORDINAL_COMPARER,
     IGNORE_CASE_COMPARER,
+    IGNORE_NON_WORD_CHARACTERS_COMPARER,
+    IGNORE_CASE_AND_NON_WORD_CHARACTERS_COMPARER,
 } from "./string-comparer";
 
 export {
