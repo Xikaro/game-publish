@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve as resolvePath } from "node:path";
 import { DependencyType } from "@/dependencies/dependency-type";
 import { PlatformType } from "@/platforms/platform-type";
+import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 import { RawFabricMetadata } from "@/loaders/fabric/raw-fabric-metadata";
 import { FabricMetadata } from "@/loaders/fabric/fabric-metadata";
 
@@ -54,6 +55,24 @@ describe("FabricMetadata", () => {
             const metadata = FabricMetadata.from(RAW_METADATA);
 
             expect(metadata.loaders).toEqual(["fabric", "quilt"]);
+        });
+    });
+
+    describe("environment", () => {
+        test("returns 'BOTH' by default", () => {
+            expect(FabricMetadata.from({ } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
+        });
+
+        test("returns the same value as the 'environment' field", () => {
+            expect(FabricMetadata.from({ environment: "client" } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
+            expect(FabricMetadata.from({ environment: "server" } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
+            expect(FabricMetadata.from({ environment: "*" } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
+        });
+
+        test("returns the same value as the 'environment' field in the custom payload", () => {
+            expect(FabricMetadata.from({ custom: { "mc-publish": { environment: "client" } } } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
+            expect(FabricMetadata.from({ custom: { "mc-publish": { environment: "server" } } } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
+            expect(FabricMetadata.from({ custom: { "mc-publish": { environment: "*" } } } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
         });
     });
 

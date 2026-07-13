@@ -1,5 +1,6 @@
 import { Dependency } from "@/dependencies";
 import { PlatformType } from "@/platforms";
+import { LoaderEnvironmentType } from "./loader-environment-type";
 
 /**
  * This interface standardizes the representation of metadata
@@ -28,6 +29,11 @@ export interface LoaderMetadata {
      * A list of mod loaders that are compatible with this mod.
      */
     get loaders(): string[];
+
+    /**
+     * The environment(s) that the mod supports.
+     */
+    get environment(): LoaderEnvironmentType;
 
     /**
      * The name of the game that the mod is created for.

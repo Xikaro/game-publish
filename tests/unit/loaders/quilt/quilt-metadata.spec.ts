@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve as resolvePath } from "node:path";
 import { DependencyType } from "@/dependencies/dependency-type";
 import { PlatformType } from "@/platforms/platform-type";
+import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 import { RawQuiltMetadata } from "@/loaders/quilt/raw-quilt-metadata";
 import { QuiltMetadata } from "@/loaders/quilt/quilt-metadata";
 
@@ -54,6 +55,24 @@ describe("QuiltMetadata", () => {
             const metadata = QuiltMetadata.from(RAW_METADATA);
 
             expect(metadata.loaders).toEqual(["quilt", "fabric"]);
+        });
+    });
+
+    describe("environment", () => {
+        test("returns 'ALL' by default", () => {
+            expect(QuiltMetadata.from({ } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.ALL);
+        });
+
+        test("returns the same value as the 'environment' field", () => {
+            expect(QuiltMetadata.from({ "minecraft": { environment: "client" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
+            expect(QuiltMetadata.from({ "minecraft": { environment: "dedicated_server" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
+            expect(QuiltMetadata.from({ "minecraft": { environment: "*" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.ALL);
+        });
+
+        test("returns the same value as the 'environment' field in the custom payload", () => {
+            expect(QuiltMetadata.from({ "mc-publish": { environment: "client" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
+            expect(QuiltMetadata.from({ "mc-publish": { environment: "server" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
+            expect(QuiltMetadata.from({ "mc-publish": { environment: "*" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.ALL);
         });
     });
 

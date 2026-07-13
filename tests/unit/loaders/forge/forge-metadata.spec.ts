@@ -3,6 +3,7 @@ import { resolve as resolvePath } from "node:path";
 import { parse as parseToml } from "toml";
 import { DependencyType } from "@/dependencies/dependency-type";
 import { PlatformType } from "@/platforms/platform-type";
+import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 import { RawForgeMetadata } from "@/loaders/forge/raw-forge-metadata";
 import { ForgeMetadata } from "@/loaders/forge/forge-metadata";
 
@@ -63,6 +64,18 @@ describe("ForgeMetadata", () => {
             const metadata = ForgeMetadata.from(RAW_METADATA);
 
             expect(metadata.loaders).toEqual(["forge", "forge2"]);
+        });
+    });
+
+    describe("environment", () => {
+        test("returns 'BOTH' by default", () => {
+            expect(ForgeMetadata.from({ } as RawForgeMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
+        });
+
+        test("returns the same value as the 'environment' field in the custom payload", () => {
+            expect(ForgeMetadata.from({ "mc-publish": { environment: "client" } } as RawForgeMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
+            expect(ForgeMetadata.from({ "mc-publish": { environment: "server" } } as RawForgeMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
+            expect(ForgeMetadata.from({ "mc-publish": { environment: "both" } } as RawForgeMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
         });
     });
 

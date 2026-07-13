@@ -31,6 +31,11 @@ export type FabricMetadataCustomPayload = {
      * A list of mod dependencies.
      */
     dependencies?: string[];
+
+    /**
+     * The environment(s) that the mod supports.
+     */
+    environment?: string;
 }
 & PartialRecord<PlatformType, string>;
 

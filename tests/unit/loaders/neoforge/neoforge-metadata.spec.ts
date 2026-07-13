@@ -3,6 +3,7 @@ import { resolve as resolvePath } from "node:path";
 import { parse as parseToml } from "toml";
 import { DependencyType } from "@/dependencies/dependency-type";
 import { PlatformType } from "@/platforms/platform-type";
+import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 import { RawNeoForgeMetadata } from "@/loaders/neoforge/raw-neoforge-metadata";
 import { NeoForgeMetadata } from "@/loaders/neoforge/neoforge-metadata";
 
@@ -63,6 +64,18 @@ describe("NeoForgeMetadata", () => {
             const metadata = NeoForgeMetadata.from(RAW_METADATA);
 
             expect(metadata.loaders).toEqual(["neoforge", "neoforge2"]);
+        });
+    });
+
+    describe("environment", () => {
+        test("returns 'BOTH' by default", () => {
+            expect(NeoForgeMetadata.from({ } as RawNeoForgeMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
+        });
+
+        test("returns the same value as the 'environment' field in the custom payload", () => {
+            expect(NeoForgeMetadata.from({ "mc-publish": { environment: "client" } } as RawNeoForgeMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
+            expect(NeoForgeMetadata.from({ "mc-publish": { environment: "server" } } as RawNeoForgeMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
+            expect(NeoForgeMetadata.from({ "mc-publish": { environment: "both" } } as RawNeoForgeMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
         });
     });
 

@@ -1,10 +1,12 @@
 import { Dependency } from "@/dependencies";
 import { MINECRAFT } from "@/games/minecraft";
+import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 import { LoaderMetadata } from "@/loaders/loader-metadata";
 import { PlatformType } from "@/platforms";
 import { $i } from "@/utils/collections";
 import { asString } from "@/utils/string-utils";
 import { getQuiltDependencies, normalizeQuiltDependency } from "./quilt-dependency";
+import { QuiltEnvironmentType } from "./quilt-environment-type";
 import { QuiltMetadataCustomPayload, getDependenciesFromQuiltMetadataCustomPayload, getLoadersFromQuiltMetadataCustomPayload, getProjectIdFromQuiltMetadataCustomPayload, getQuiltMetadataCustomPayload } from "./quilt-metadata-custom-payload";
 import { RawQuiltMetadata } from "./raw-quilt-metadata";
 
@@ -64,6 +66,15 @@ export class QuiltMetadata implements LoaderMetadata {
      */
     get loaders(): string[] {
         return getLoadersFromQuiltMetadataCustomPayload(this.customPayload);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    get environment(): LoaderEnvironmentType {
+        return LoaderEnvironmentType.parse(this.customPayload.environment)
+            || QuiltEnvironmentType.toLoaderEnvironmentType(this._raw.minecraft?.environment)
+            || LoaderEnvironmentType.ALL;
     }
 
     /**

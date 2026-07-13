@@ -1,5 +1,6 @@
 import { Dependency } from "@/dependencies";
 import { MINECRAFT } from "@/games/minecraft";
+import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 import { LoaderMetadata } from "@/loaders/loader-metadata";
 import { PlatformType } from "@/platforms";
 import { $i } from "@/utils/collections";
@@ -64,6 +65,13 @@ export class NeoForgeMetadata implements LoaderMetadata {
      */
     get loaders(): string[] {
         return getLoadersFromNeoForgeMetadataCustomPayload(this._raw);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    get environment(): LoaderEnvironmentType {
+        return LoaderEnvironmentType.parse(this.customPayload.environment) || LoaderEnvironmentType.BOTH;
     }
 
     /**

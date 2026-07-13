@@ -1,4 +1,8 @@
 export {
+    LoaderEnvironmentType,
+} from "./loader-environment-type";
+
+export {
     LoaderMetadata,
 } from "./loader-metadata";
 

@@ -1,10 +1,12 @@
 import { Dependency } from "@/dependencies";
 import { MINECRAFT } from "@/games/minecraft";
+import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 import { LoaderMetadata } from "@/loaders/loader-metadata";
 import { PlatformType } from "@/platforms";
 import { $i } from "@/utils/collections";
 import { asString } from "@/utils/string-utils";
 import { getFabricDependencies, normalizeFabricDependency } from "./fabric-dependency";
+import { FabricEnvironmentType } from "./fabric-environment-type";
 import { FabricMetadataCustomPayload, getDependenciesFromFabricMetadataCustomPayload, getFabricMetadataCustomPayload, getLoadersFromFabricMetadataCustomPayload, getProjectIdFromFabricMetadataCustomPayload } from "./fabric-metadata-custom-payload";
 import { RawFabricMetadata } from "./raw-fabric-metadata";
 
@@ -63,6 +65,15 @@ export class FabricMetadata implements LoaderMetadata {
      */
     get loaders(): string[] {
         return getLoadersFromFabricMetadataCustomPayload(this.customPayload);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    get environment(): LoaderEnvironmentType {
+        return LoaderEnvironmentType.parse(this.customPayload.environment)
+            || FabricEnvironmentType.toLoaderEnvironmentType(this._raw.environment)
+            || LoaderEnvironmentType.BOTH;
     }
 
     /**
