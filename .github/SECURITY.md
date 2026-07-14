@@ -1,12 +1,12 @@
 # Security Notice
 
-This is the security notice for the [mc-publish](https://github.com/Kir-Antipov/mc-publish) repository. The notice explains how and when vulnerabilities should be reported.
+This is the security notice for the [mc-publish](https://github.com/Kira-NT/mc-publish) repository. The notice explains how and when vulnerabilities should be reported.
 
 This notice is applicable to the latest release of the project. If you are using an outdated version, please upgrade to the latest release before reporting any issues.
 
 ## Reporting a Vulnerability
 
-If you believe you have found a security vulnerability in this project, please send an email to [kp.antipov@gmail.com](mailto:kp.antipov@gmail.com) with a detailed description of the issue. We will review and respond to all security reports promptly.
+If you believe you have found a security vulnerability in this project, please send an email to [kira.canary@proton.me](mailto:kira.canary@proton.me) with a detailed description of the issue. We will review and respond to all security reports promptly.
 
 We kindly request that you avoid publicly disclosing any security vulnerabilities until we have had an opportunity to address them. We are committed to addressing and resolving reported issues in a responsible and timely manner. Thus, please, **do not** open a GitHub issue for the found vulnerability.
 

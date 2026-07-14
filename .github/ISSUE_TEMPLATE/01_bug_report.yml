@@ -1,5 +1,5 @@
 name: Bug report
-description: Submit a bug report to help us improve.
+description: Submit a bug report to help us improve
 title: "[Bug] "
 labels: ["bug"]
 body:
@@ -7,7 +7,6 @@ body:
     id: description
     attributes:
       label: Description
-      render: Markdown
       description: Please provide a clear and concise description of the problem.
     validations:
       required: true
@@ -73,7 +72,7 @@ body:
               # Build artifacts...
 
               - name: Publish assets to GitHub, Modrinth, and CurseForge
-                uses: Kir-Antipov/mc-publish@v4.0
+                uses: Kira-NT/mc-publish@v4
                 with:
                   name: ""
                   modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -89,7 +88,7 @@ body:
       label: Logs
       description: Copy and paste the relevant logs, if applicable.
       placeholder: |
-        Run Kir-Antipov/mc-publish@v4.0
+        Run Kira-NT/mc-publish@v4
         with:
           modrinth-id: AAAAAAAA
           modrinth-token: ***

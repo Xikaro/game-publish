@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Kir-Antipov/mc-publish.git"
+    "url": "git+https://github.com/Kira-NT/mc-publish.git"
   },
   "keywords": [
     "github",
@@ -27,12 +27,12 @@
     "minecraft-mod",
     "publish"
   ],
-  "author": "Kir-Antipov",
+  "author": "Kira-NT",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Kir-Antipov/mc-publish/issues"
+    "url": "https://github.com/Kira-NT/mc-publish/issues"
   },
-  "homepage": "https://github.com/Kir-Antipov/mc-publish#readme",
+  "homepage": "https://github.com/Kira-NT/mc-publish#readme",
   "devDependencies": {
     "@babel/preset-env": "^7.23.8",
     "@types/jest": "^29.5.11",

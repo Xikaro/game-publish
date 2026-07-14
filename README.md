@@ -1,8 +1,7 @@
 ## mc-publish
 
-[![GitHub tag](https://img.shields.io/github/tag/Kir-Antipov/mc-publish.svg)](https://github.com/Kir-Antipov/mc-publish/releases/latest)
-[![GitHub build status](https://img.shields.io/github/actions/workflow/status/Kir-Antipov/mc-publish/ci.yml?branch=master)](https://github.com/Kir-Antipov/mc-publish/actions/workflows/ci.yml)
-[![GitHub license](https://img.shields.io/github/license/Kir-Antipov/mc-publish.svg?cacheSeconds=36000)](https://github.com/Kir-Antipov/mc-publish#readme)
+[![GitHub tag](https://img.shields.io/github/tag/Kira-NT/mc-publish.svg)](https://github.com/Kira-NT/mc-publish/releases/latest)
+[![GitHub license](https://img.shields.io/github/license/Kira-NT/mc-publish.svg?cacheSeconds=36000)](https://github.com/Kira-NT/mc-publish#readme)
 
 A versatile GitHub Action to streamline the publication of Minecraft projects.
 
@@ -19,7 +18,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: Kir-Antipov/mc-publish@v3.3
+      - uses: Kira-NT/mc-publish@v3
         with:
           # Only include this section if you wish to publish
           # your assets on Modrinth.
@@ -51,7 +50,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: Kir-Antipov/mc-publish@v3.3
+      - uses: Kira-NT/mc-publish@v3
         with:
           modrinth-id: AANobbMI
           modrinth-featured: true
