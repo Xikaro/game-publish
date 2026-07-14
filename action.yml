@@ -11,7 +11,7 @@
 name: mc-publish
 description: Your one-stop GitHub Action for seamless Minecraft project
   publication across various platforms.
-author: Kir-Antipov
+author: Kira-NT
 branding:
   color: purple
   icon: box
@@ -113,6 +113,10 @@ inputs:
     default: ${undefined}
   loaders:
     description: An array of supported mod loaders.
+    required: false
+    default: ${undefined}
+  environment:
+    description: A set of supported environments.
     required: false
     default: ${undefined}
   game-versions:
@@ -263,6 +267,18 @@ inputs:
     description: An array of supported mod loaders.
     required: false
     default: ${undefined}
+  modrinth-environment:
+    description: A set of supported environments.
+    required: false
+    default: ${undefined}
+  curseforge-environment:
+    description: A set of supported environments.
+    required: false
+    default: ${undefined}
+  github-environment:
+    description: A set of supported environments.
+    required: false
+    default: ${undefined}
   modrinth-game-versions:
     description: An array of supported Minecraft versions.
     required: false
@@ -398,5 +414,5 @@ outputs:
       for the new version on GitHub, such as file `name`, `id`, and download
       `url`.
 runs:
-  using: node16
+  using: node24
   main: dist/index.js
