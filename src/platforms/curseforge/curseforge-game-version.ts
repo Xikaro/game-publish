@@ -1,6 +1,6 @@
 import { GameVersion } from "@/games";
 import { $i } from "@/utils/collections";
-import { EqualityComparer, IGNORE_CASE_EQUALITY_COMPARER } from "@/utils/comparison";
+import { EqualityComparer, IGNORE_CASE_EQUALITY_COMPARER, IGNORE_CASE_AND_NON_WORD_CHARACTERS_EQUALITY_COMPARER } from "@/utils/comparison";
 
 /**
  * Represents a game version.
@@ -47,6 +47,16 @@ export const CURSEFORGE_GAME_VERSION_PLUGIN_NAME_COMPARER: EqualityComparer<stri
     const bVersion = b?.match(/\d+\.\d+/)?.[0];
 
     return aVersion === bVersion;
+};
+
+/**
+ * An equality comparer that considers two loader names equal if they share at least one word.
+ */
+export const CURSEFORGE_LOADER_NAME_COMPARER: EqualityComparer<string> = (a, b) => {
+    const aWords = (a || "").split(/\s+/).filter(x => x);
+    const bWords = (b || "").split(/\s+/).filter(x => x);
+
+    return aWords.some(x => bWords.some(y => IGNORE_CASE_AND_NON_WORD_CHARACTERS_EQUALITY_COMPARER(x, y)));
 };
 
 /**

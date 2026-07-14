@@ -1,5 +1,5 @@
 import { GameVersion } from "@/games/game-version";
-import { CURSEFORGE_GAME_VERSION_PLUGIN_NAME_COMPARER, CURSEFORGE_GAME_VERSION_SNAPSHOT_NAME_COMPARER, CurseForgeGameVersion, findCurseForgeGameVersionIdsByNames, formatCurseForgeGameVersion, formatCurseForgeGameVersionSnapshot } from "@/platforms/curseforge/curseforge-game-version";
+import { CURSEFORGE_GAME_VERSION_PLUGIN_NAME_COMPARER, CURSEFORGE_GAME_VERSION_SNAPSHOT_NAME_COMPARER, CURSEFORGE_LOADER_NAME_COMPARER, CurseForgeGameVersion, findCurseForgeGameVersionIdsByNames, formatCurseForgeGameVersion, formatCurseForgeGameVersionSnapshot } from "@/platforms/curseforge/curseforge-game-version";
 
 describe("CURSEFORGE_GAME_VERSION_SNAPSHOT_NAME_COMPARER", () => {
     test("returns true when both versions are the same and do not contain '-Snapshot'", () => {
@@ -98,6 +98,64 @@ describe("CURSEFORGE_GAME_VERSION_PLUGIN_NAME_COMPARER", () => {
 
         expect(CURSEFORGE_GAME_VERSION_PLUGIN_NAME_COMPARER(a, b)).toBe(false);
         expect(CURSEFORGE_GAME_VERSION_PLUGIN_NAME_COMPARER(b, a)).toBe(false);
+    });
+});
+
+describe("CURSEFORGE_LOADER_NAME_COMPARER", () => {
+    test("returns true when both names are the same", () => {
+        const a = "Risugami's ModLoader";
+        const b = "Risugami's ModLoader";
+
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(a, b)).toBe(true);
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(b, a)).toBe(true);
+    });
+
+    test("returns true when a partial name is provided", () => {
+        const a = "ModLoader";
+        const b = "Risugami's ModLoader";
+
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(a, b)).toBe(true);
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(b, a)).toBe(true);
+    });
+
+    test("ignores case", () => {
+        const a = "modloader";
+        const b = "Risugami's ModLoader";
+
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(a, b)).toBe(true);
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(b, a)).toBe(true);
+    });
+
+    test("ignores non-word characters", () => {
+        const a = "risugamis";
+        const b = "Risugami's ModLoader";
+
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(a, b)).toBe(true);
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(b, a)).toBe(true);
+    });
+
+    test("returns false when the names are different", () => {
+        const a = "Flint Loader";
+        const b = "Risugami's ModLoader";
+
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(a, b)).toBe(false);
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(b, a)).toBe(false);
+    });
+
+    test("returns false when one name is empty", () => {
+        const a = "";
+        const b = "Risugami's ModLoader";
+
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(a, b)).toBe(false);
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(b, a)).toBe(false);
+    });
+
+    test("returns false when one name is null", () => {
+        const a = null;
+        const b = "Risugami's ModLoader";
+
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(a, b)).toBe(false);
+        expect(CURSEFORGE_LOADER_NAME_COMPARER(b, a)).toBe(false);
     });
 });
 

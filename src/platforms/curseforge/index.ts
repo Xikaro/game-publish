@@ -29,6 +29,7 @@ export {
 
     CURSEFORGE_GAME_VERSION_PLUGIN_NAME_COMPARER,
     CURSEFORGE_GAME_VERSION_SNAPSHOT_NAME_COMPARER,
+    CURSEFORGE_LOADER_NAME_COMPARER,
 
     findCurseForgeGameVersionIdsByNames,
 } from "./curseforge-game-version";

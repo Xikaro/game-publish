@@ -6,7 +6,7 @@ import { JavaVersion } from "@/utils/java";
 import { Fetch, HttpRequest, createFetch, simpleCache, throwOnError } from "@/utils/net";
 import { CurseForgeError, getInvalidProjectSlug, isCurseForgeError, isInvalidGameVersionIdCurseForgeError, isInvalidProjectSlugCurseForgeError } from "./curseforge-error";
 import { CurseForgeFile, CurseForgeFileInit } from "./curseforge-file";
-import { CURSEFORGE_GAME_VERSION_PLUGIN_NAME_COMPARER, CURSEFORGE_GAME_VERSION_SNAPSHOT_NAME_COMPARER, CurseForgeGameVersion, findCurseForgeGameVersionIdsByNames, formatCurseForgeGameVersion, formatCurseForgeGameVersionSnapshot } from "./curseforge-game-version";
+import { CURSEFORGE_GAME_VERSION_PLUGIN_NAME_COMPARER, CURSEFORGE_GAME_VERSION_SNAPSHOT_NAME_COMPARER, CURSEFORGE_LOADER_NAME_COMPARER, CurseForgeGameVersion, findCurseForgeGameVersionIdsByNames, formatCurseForgeGameVersion, formatCurseForgeGameVersionSnapshot } from "./curseforge-game-version";
 import { CurseForgeGameVersionMap, createCurseForgeGameVersionMap } from "./curseforge-game-version-map";
 import { BUKKIT_GAME_VERSION_TYPE, CurseForgeGameVersionType } from "./curseforge-game-version-type";
 import { CurseForgeGameVersionUnion } from "./curseforge-game-version-union";
@@ -198,7 +198,7 @@ export class CurseForgeUploadApiClient {
 
         // gameVersions for mods
         const gameVersionIds = findCurseForgeGameVersionIdsByNames(map.game_versions, gameVersionNames, undefined, CURSEFORGE_GAME_VERSION_SNAPSHOT_NAME_COMPARER);
-        const loaderIds = findCurseForgeGameVersionIdsByNames(map.loaders, loaders);
+        const loaderIds = findCurseForgeGameVersionIdsByNames(map.loaders, loaders, undefined, CURSEFORGE_LOADER_NAME_COMPARER);
         const environmentIds = findCurseForgeGameVersionIdsByNames(map.environments, environments);
         const javaIds = findCurseForgeGameVersionIdsByNames(map.java_versions, javaVersionNames);
 
