@@ -68,7 +68,7 @@ const CURSEFORGE_UPLOAD_FETCH = createFakeFetch({
             expect(metadata.displayName).toBe("Version v1.0.0");
             expect(metadata.releaseType).toBe(VersionType.ALPHA);
             expect(metadata.parentFileID).toBeUndefined();
-            expect(metadata.gameVersions).toEqual([9008, 7499, 8326]);
+            expect(metadata.gameVersions).toEqual([9008, 7499, 9638, 9639, 8326]);
             expect(metadata.relations).toEqual({
                 projects: [{
                     slug: "fabric-api",

@@ -1,6 +1,7 @@
 import { VersionType } from "@/utils/versioning";
 import { FileInfo } from "@/utils/io";
 import { ModrinthDependency } from "./modrinth-dependency";
+import { ModrinthEnvironmentType } from "./modrinth-environment-type";
 
 /**
  * Represents a Modrinth project version.
@@ -178,6 +179,11 @@ export interface ModrinthVersionInit {
      * The mod loaders that this version supports.
      */
     loaders?: string[];
+
+    /**
+     * The environment that this version is for.
+     */
+    environment?: ModrinthEnvironmentType;
 
     /**
      * Whether the version is featured or not.

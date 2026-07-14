@@ -8,6 +8,7 @@ import { ArgumentError } from "@/utils/errors";
 import { ModrinthApiClient } from "./modrinth-api-client";
 import { ModrinthDependency } from "./modrinth-dependency";
 import { ModrinthDependencyType } from "./modrinth-dependency-type";
+import { ModrinthEnvironmentType } from "./modrinth-environment-type";
 import { ModrinthProject } from "./modrinth-project";
 import { ModrinthUnfeatureMode } from "./modrinth-unfeature-mode";
 import { ModrinthVersion } from "./modrinth-version";
@@ -112,6 +113,8 @@ export class ModrinthUploader extends GenericPlatformUploader<ModrinthUploaderOp
         const gameVersions = await this.convertToModrinthGameVersionNames(request.gameVersions, api);
         const loaders = await this.convertToModrinthLoaderNames(request.loaders, project, api);
         const dependencies = await this.convertToModrinthDependencies(request.dependencies, api);
+        const unknownEnvironment = ModrinthEnvironmentType.fromLoaderEnvironmentType(request.environment);
+        const environment = unknownEnvironment === ModrinthEnvironmentType.UNKNOWN ? undefined : unknownEnvironment;
 
         return await api.createVersion({
             name: request.name,
@@ -122,6 +125,7 @@ export class ModrinthUploader extends GenericPlatformUploader<ModrinthUploaderOp
             game_versions: gameVersions,
             version_type: request.versionType,
             loaders,
+            environment,
             featured: request.featured,
             files: request.files,
         });

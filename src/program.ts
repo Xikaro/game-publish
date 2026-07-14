@@ -116,6 +116,7 @@ async function fillInDefaultValues<T extends McPublishInput[P], P extends Platfo
     options.name ??= githubContext.payload.release?.name || options.version;
     options.changelog ??= githubContext.payload.release?.body || "";
     options.loaders ??= metadata?.loaders || [];
+    options.environment ||= metadata?.environment;
     options.dependencies ??= metadata?.dependencies || [];
     options.gameVersions = unwrappedGameVersions;
 

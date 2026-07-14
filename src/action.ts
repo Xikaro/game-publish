@@ -13,6 +13,7 @@ import { ModrinthUnfeatureMode } from "@/platforms/modrinth/modrinth-unfeature-m
 import { SecureString } from "@/utils/security/secure-string";
 import { FileInfo } from "@/utils/io/file-info";
 import { VersionType } from "@/utils/versioning/version-type";
+import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 import { Dependency } from "@/dependencies/dependency";
 import { GameVersionFilter } from "@/games/game-version-filter";
 import { JavaVersion } from "@/utils/java/java-version";
@@ -81,6 +82,11 @@ export interface McPublishInput {
          * An array of supported mod loaders.
          */
         loaders?: string[];
+
+        /**
+         * A set of supported environments.
+         */
+        environment?: LoaderEnvironmentType;
 
         /**
          * An array of supported Minecraft versions.
@@ -161,6 +167,11 @@ export interface McPublishInput {
          * An array of supported mod loaders.
          */
         loaders?: string[];
+
+        /**
+         * A set of supported environments.
+         */
+        environment?: LoaderEnvironmentType;
 
         /**
          * An array of supported Minecraft versions.
@@ -268,6 +279,11 @@ export interface McPublishInput {
         loaders?: string[];
 
         /**
+         * A set of supported environments.
+         */
+        environment?: LoaderEnvironmentType;
+
+        /**
          * An array of supported Minecraft versions.
          */
         gameVersions?: string[];
@@ -332,6 +348,11 @@ export interface McPublishInput {
      * An array of supported mod loaders.
      */
     loaders?: string[];
+
+    /**
+     * A set of supported environments.
+     */
+    environment?: LoaderEnvironmentType;
 
     /**
      * An array of supported Minecraft versions.

@@ -1,11 +1,13 @@
 import { CurseForgeUploadRequest as UploadRequest, CurseForgeUploadReport as UploadReport } from "@/action";
 import { Dependency } from "@/dependencies";
+import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 import { PlatformType } from "@/platforms/platform-type";
 import { GenericPlatformUploader, GenericPlatformUploaderOptions } from "@/platforms/generic-platform-uploader";
 import { ArgumentError } from "@/utils/errors";
 import { stringEquals } from "@/utils/string-utils";
 import { CurseForgeDependency } from "./curseforge-dependency";
 import { CurseForgeDependencyType } from "./curseforge-dependency-type";
+import { CurseForgeEnvironmentType } from "./curseforge-environment-type";
 import { CurseForgeEternalApiClient } from "./curseforge-eternal-api-client";
 import { CurseForgeProject, isCurseForgeProjectId } from "./curseforge-project";
 import { CurseForgeUploadApiClient } from "./curseforge-upload-api-client";
@@ -115,6 +117,7 @@ export class CurseForgeUploader extends GenericPlatformUploader<CurseForgeUpload
      */
     private async createVersion(request: CurseForgeUploadRequest, projectId: number, api: CurseForgeUploadApiClient, eternalApi: CurseForgeEternalApiClient): Promise<CurseForgeVersion> {
         const dependencies = await this.convertToCurseForgeDependencies(request.dependencies, eternalApi);
+        const environments = CurseForgeEnvironmentType.fromLoaderEnvironmentType(request.environment || LoaderEnvironmentType.ALL);
 
         return await api.createVersion({
             name: request.name,
@@ -126,6 +129,7 @@ export class CurseForgeUploader extends GenericPlatformUploader<CurseForgeUpload
             loaders: request.loaders,
             files: request.files,
             dependencies,
+            environments,
         });
     }
 

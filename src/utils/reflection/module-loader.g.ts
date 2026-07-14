@@ -13,6 +13,7 @@ import * as _08266313cf301b8949a6cedcaa47a6c3e43934d9 from "@/platforms/modrinth
 import * as _d55dccbfda6518ce241204ddb1a0e427ce862b40 from "@/utils/security/secure-string";
 import * as _52f2d2846827ca15dbb2bc99e7396358640a305c from "@/utils/io/file-info";
 import * as _cece1ed3512bc9bb742f3472360aea9d482df4ac from "@/utils/versioning/version-type";
+import * as _843f3b2684ed65010fc0f9b112ae1643ec91421a from "@/loaders/loader-environment-type";
 import * as _61ccbb54c5e0251e3bf7013ca2e222f64c571674 from "@/dependencies/dependency";
 import * as _12c3001b56ab71951504c91b71926343a997a6c2 from "@/games/game-version-filter";
 import * as _9f1d8775cb694c12b0f9f4e026b96daf7eca20c3 from "@/utils/java/java-version";
@@ -24,6 +25,7 @@ export const ACTION_MODULE_LOADER = (path: string): Promise<Record<string, unkno
     if (path === "utils/security/secure-string") return Promise.resolve(_d55dccbfda6518ce241204ddb1a0e427ce862b40);
     if (path === "utils/io/file-info") return Promise.resolve(_52f2d2846827ca15dbb2bc99e7396358640a305c);
     if (path === "utils/versioning/version-type") return Promise.resolve(_cece1ed3512bc9bb742f3472360aea9d482df4ac);
+    if (path === "loaders/loader-environment-type") return Promise.resolve(_843f3b2684ed65010fc0f9b112ae1643ec91421a);
     if (path === "dependencies/dependency") return Promise.resolve(_61ccbb54c5e0251e3bf7013ca2e222f64c571674);
     if (path === "games/game-version-filter") return Promise.resolve(_12c3001b56ab71951504c91b71926343a997a6c2);
     if (path === "utils/java/java-version") return Promise.resolve(_9f1d8775cb694c12b0f9f4e026b96daf7eca20c3);

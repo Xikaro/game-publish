@@ -186,6 +186,7 @@ export class CurseForgeUploadApiClient {
      */
     private async getGameVersionIdVariants(gameVersionUnion: CurseForgeGameVersionUnion): Promise<number[][]> {
         const loaders = gameVersionUnion.loaders || [];
+        const environments = gameVersionUnion.environments || [];
         const javaVersions = gameVersionUnion.java_versions || [];
         const gameVersions = gameVersionUnion.game_versions?.length ? await this._gameVersionProvider(gameVersionUnion.game_versions) : [];
 
@@ -198,6 +199,7 @@ export class CurseForgeUploadApiClient {
         // gameVersions for mods
         const gameVersionIds = findCurseForgeGameVersionIdsByNames(map.game_versions, gameVersionNames, undefined, CURSEFORGE_GAME_VERSION_SNAPSHOT_NAME_COMPARER);
         const loaderIds = findCurseForgeGameVersionIdsByNames(map.loaders, loaders);
+        const environmentIds = findCurseForgeGameVersionIdsByNames(map.environments, environments);
         const javaIds = findCurseForgeGameVersionIdsByNames(map.java_versions, javaVersionNames);
 
         // gameVersions for plugins
@@ -210,7 +212,7 @@ export class CurseForgeUploadApiClient {
             // These ids are used by: `Mods`.
             //
             // This is the most common project type out there, so we try these ids first.
-            loaderIds.length ? gameVersionIds.concat(loaderIds, javaIds) : gameVersionIds,
+            loaderIds.length ? gameVersionIds.concat(loaderIds, environmentIds, javaIds) : gameVersionIds,
 
             // These ids are used by: `Bukkit Plugins`.
             //

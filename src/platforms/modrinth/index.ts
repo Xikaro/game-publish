@@ -15,6 +15,10 @@ export {
 } from "./modrinth-dependency";
 
 export {
+    ModrinthEnvironmentType,
+} from "./modrinth-environment-type";
+
+export {
     ModrinthGameVersion,
 } from "./modrinth-game-version";
 

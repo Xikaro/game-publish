@@ -18,4 +18,9 @@ export interface CurseForgeGameVersionUnion {
      * The mod loaders that this version supports.
      */
     loaders?: string[];
+
+    /**
+     * The environments that this version supports.
+     */
+    environments?: string[];
 }

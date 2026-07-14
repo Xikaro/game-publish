@@ -21,6 +21,10 @@ export {
 } from "./curseforge-dependency-type";
 
 export {
+    CurseForgeEnvironmentType,
+} from "./curseforge-environment-type";
+
+export {
     CurseForgeGameVersion,
 
     CURSEFORGE_GAME_VERSION_PLUGIN_NAME_COMPARER,

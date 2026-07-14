@@ -14,6 +14,7 @@ import { ModrinthUnfeatureMode } from "@/platforms/modrinth/modrinth-unfeature-m
 import { ModrinthVersionInit } from "@/platforms/modrinth/modrinth-version";
 import { MODRINTH_API_URL } from "@/platforms/modrinth/modrinth-api-client";
 import { ModrinthUploader } from "@/platforms/modrinth/modrinth-uploader";
+import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 
 const DB = Object.freeze({
     loaders: Object.freeze(JSON.parse(
@@ -61,6 +62,7 @@ const MODRINTH_FETCH = createFakeFetch({
             expect(data["primary_file"]).toBe("_0");
             expect(data["file_parts"]).toEqual(["_0"]);
             expect(data.loaders).toEqual(["fabric"]);
+            expect(data.environment).toBe("client_and_server");
             expect(data.game_versions).toEqual(["1.18.2"]);
             expect(data.dependencies).toContainEqual({ project_id: "P7dR8mSH", dependency_type: "required" });
 
@@ -113,6 +115,7 @@ describe("ModrinthUploader", () => {
                 dependencies: [parseDependency("fabric-api@0.75.0(required)")],
                 gameVersions: ["1.18.2"],
                 loaders: ["fabric", "unknown"],
+                environment: LoaderEnvironmentType.ALL,
                 java: [JavaVersion.of(17)],
                 unfeatureMode: ModrinthUnfeatureMode.ANY,
             });
