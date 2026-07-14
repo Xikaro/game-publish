@@ -1,60 +1,53 @@
 ## mc-publish
 
-[![GitHub tag](https://img.shields.io/github/tag/Kira-NT/mc-publish.svg)](https://github.com/Kira-NT/mc-publish/releases/latest)
-[![GitHub license](https://img.shields.io/github/license/Kira-NT/mc-publish.svg?cacheSeconds=36000)](https://github.com/Kira-NT/mc-publish#readme)
+[![Version](https://img.shields.io/github/v/release/Kira-NT/mc-publish?sort=date&label=version)](https://github.com/Kira-NT/mc-publish/releases/latest)
+[![License](https://img.shields.io/github/license/Kira-NT/mc-publish?cacheSeconds=36000)](https://github.com/Kira-NT/mc-publish/blob/HEAD/LICENSE.md)
 
-A versatile GitHub Action to streamline the publication of Minecraft projects.
-
-Supports mods, plugins, resource packs, and more, across various platforms such as Modrinth, GitHub Releases, and CurseForge. Features automatic value resolution and minimal configuration requirements for effortless setup and use.
+`mc-publish` provides a unified interface for publishing mods, plugins, resource packs, and other project types to popular platforms such as Modrinth, GitHub Releases, and CurseForge. Designed with a zero-config approach in mind, it automatically resolves common values and minimizes boilerplate, while still offering lots of configuration options for more advanced users.
 
 ### 📖 Usage
 
-Most values are resolved automatically, so to publish your project, you only need a minimal amount of configuration.
+Since most values are resolved automatically, this minimal config is essentially all you need to publish your project:
 
 ```yaml
 jobs:
   build:
-    # ...
     permissions:
       contents: write
+    # ...
     steps:
+      # ...
       - uses: Kira-NT/mc-publish@v3
         with:
-          # Only include this section if you wish to publish
-          # your assets on Modrinth.
+          # If your build toolchain doesn't place the resulting artifacts directly in build/libs/,
+          # you will need to manually specify what you want to upload:
+          # files: build/libs/fabric/!(*-@(dev|sources|javadoc)).jar
+
+          # Only include this section if you wish to publish your assets to Modrinth.
           modrinth-id: AANobbMI
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
-          # Only include this section if you wish to publish
-          # your assets on CurseForge.
+          # Only include this section if you wish to publish your assets to CurseForge.
           curseforge-id: 394468
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
-          # Only include this section if you wish to publish
-          # your assets on GitHub.
+          # Only include this section if you wish to publish your assets to GitHub.
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### 📘 Advanced Usage
 
-The following verbose example is for illustrative purposes only and is not recommended for regular use. `mc-publish` was designed to require minimal configuration, so there's no need for all of these settings.
-
-Overly complex configurations with hardcoded values that could be resolved automatically not only complicate your workflow but can also introduce errors. For example, attempting to use `github-discussion: Announcements` in a repository that doesn't have a "Announcements" discussion category or discussions in general would lead to problems.
-
-As a rule of thumb, if you don't see a clear reason to use an input, it's best not to include it.
+The following verbose example is for illustrative purposes only and is not recommended for regular use:
 
 ```yml
 jobs:
   build:
     # ...
-    permissions:
-      contents: write
     steps:
+      # ...
       - uses: Kira-NT/mc-publish@v3
         with:
           modrinth-id: AANobbMI
-          modrinth-featured: true
-          modrinth-unfeature-mode: subset
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
           curseforge-id: 394468
@@ -81,6 +74,7 @@ jobs:
             fabric
             forge
             quilt
+          environment: client | server
           game-versions: |
             [1.16,1.16.5)
             >=21w37a <1.18.2
@@ -105,37 +99,36 @@ jobs:
 
 ### 📝 Inputs
 
-| Name                                                                 | Description                                                                                                                                       | Default                                                                                         | Examples                                                                   |
-|----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
-| [modrinth-id](#modrinth-id)                             | The unique identifier of your Modrinth project.                                                                                                   | A value specified in the metadata file.                                                         | `AANobbMI`                                                                 |
-| [modrinth-featured](#modrinth-featured)                 | Set to `true` to feature the version on Modrinth.                                                                                                 | `true`                                                                                          | `true` <br> `false`                                                        |
-| [modrinth-unfeature-mode](#modrinth-unfeature-mode)     | Sets the behavior for unfeaturing older Modrinth versions.                                                                                        | If `modrinth-featured` is set to `true`, `subset`; otherwise, `none`.                           | `none` <br> `subset` <br> `intersection` <br> `any`                        |
-| [modrinth-token](#modrinth-token)                       | Your Modrinth API token.                                                                                                                          | -                                                                                               | `${{ secrets.MODRINTH_TOKEN }}`                                            |
-| [curseforge-id](#curseforge-id)                         | The unique identifier of your CurseForge project.                                                                                                 | A value specified in the metadata file.                                                         | `394468`                                                                   |
-| [curseforge-token](#curseforge-token)                   | Your CurseForge API token.                                                                                                                        | -                                                                                               | `${{ secrets.CURSEFORGE_TOKEN }}`                                          |
-| [github-tag](#github-tag)                               | The tag name for the release where assets will be uploaded.                                                                                       | If a release triggered the action, its tag is used. Otherwise, inferred from `GITHUB_REF`.      | `mc1.17.1-0.3.2`                                                           |
-| [github-generate-changelog](#github-generate-changelog) | Set to `true` to generate a changelog automatically for this release. Ignored if the GitHub Release already exists.                               | `true`, if `changelog` and `changelog-file` are not provided; otherwise, `false`.               | `true` <br> `false`                                                        |
-| [github-draft](#github-draft)                           | Set to `true` to create a draft release. Ignored if the GitHub Release already exists.                                                            | `false`                                                                                         | `true` <br> `false`                                                        |
-| [github-prerelease](#github-prerelease)                 | Set to `true` to mark the release as a prerelease. Ignored if the GitHub Release already exists.                                                  | `false`, if `version-type` is `release`; otherwise, `true`.                                     | `true` <br> `false`                                                        |
-| [github-commitish](#github-commitish)                   | Defines the commitish value that determines where the Git tag is created from. Ignored if the Git tag already exists.                             | The repository's default branch.                                                                | `dev` <br> `feature/86`                                                    |
-| [github-discussion](#github-discussion)                 | If specified, creates and links a discussion of the specified **EXISTING** category to the release. Ignored if the GitHub Release already exists. | -                                                                                               | `Announcements`                                                            |
-| [github-token](#github-token)                           | Your GitHub API token.                                                                                                                            | -                                                                                               | `${{ secrets.GITHUB_TOKEN }}`                                              |
-| [files](#files)                                         | An array of [globs](https://www.digitalocean.com/community/tools/glob) determining which files to upload.                                         | `build/libs/!(*-@(dev\|sources\|javadoc)).jar` <br> `build/libs/*-@(dev\|sources\|javadoc).jar` | `build/libs/*.jar`                                                         |
-| [name](#name)                                           | The name of the version.                                                                                                                          | A title of the release that triggered the action.                                               | `Sodium 0.3.2 for Minecraft 1.17.1`                                        |
-| [version](#version)                                     | The version number.                                                                                                                               | A tag of the release that triggered the action.                                                 | `mc1.17.1-0.3.2`                                                           |
-| [version-type](#version-type)                           | The version type.                                                                                                                                 | Will be parsed from the `version` value.                                                        | `alpha` <br> `beta` <br> `release`                                         |
-| [changelog](#changelog)                                 | The changelog for this version.                                                                                                                   | A body of the release that triggered the action.                                                | `This release fixes a few more issues in Sodium 0.3 for Minecraft 1.17.1.` |
-| [changelog-file](#changelog-file)                       | A [glob](https://www.digitalocean.com/community/tools/glob) pointing to the changelog file.                                                       | -                                                                                               | `CHANGELOG.md`                                                             |
-| [loaders](#loaders)                                     | An array of supported loaders.                                                                                                                    | A value specified in the metadata file.                                                         | `fabric` <br> `forge` <br> `quilt` <br> `rift`                             |
-| [game-versions](#game-versions)                         | An array of supported Minecraft versions.                                                                                                         | A value specified in the metadata file.                                                         | `21w37a` <br> `>=1.17` <br> `[1.17,)`                                      |
-| [dependencies](#dependencies)                           | An array of dependencies required by your project.                                                                                                | A value specified in the metadata file.                                                         | `fabric@0.40.0(required)`                                                  |
-| [game-version-filter](#game-version-filter)             | Controls the method used to filter game versions.                                                                                                 | `releases \| min-major \| min-minor`                                                            | `releases` <br> `min` <br> `max` <br> `none`                               |
-| [java](#java)                                           | An array of Java versions compatible with your project.                                                                                           | -                                                                                               | `Java 8` <br> `Java 1.8` <br> `8`                                          |
-| [retry-attempts](#retry-attempts)                       | Defines the maximum number of asset publishing attempts.                                                                                          | `2`                                                                                             | `2` <br> `10` <br> `-1`                                                    |
-| [retry-delay](#retry-delay)                             | Specifies the delay (in milliseconds) between asset publishing attempts.                                                                          | `10000`                                                                                         | `1000` <br> `60000` <br> `0`                                               |
-| [fail-mode](#fail-mode)                                 | Controls how the action responds to errors during the mod publishing process.                                                                     | `fail`                                                                                          | `fail` <br> `warn` <br> `skip`                                             |
+| Name | Description | Default | Examples |
+|------|-------------|---------|----------|
+| [modrinth-id](#modrinth-id) | The unique identifier of your Modrinth project. | A value specified in the metadata file. | `AANobbMI` |
+| [modrinth-token](#modrinth-token) | Your Modrinth API token. | - | `${{ secrets.MODRINTH_TOKEN }}` |
+| [curseforge-id](#curseforge-id) | The unique identifier of your CurseForge project. | A value specified in the metadata file. | `394468` |
+| [curseforge-token](#curseforge-token) | Your CurseForge API token. | - | `${{ secrets.CURSEFORGE_TOKEN }}` |
+| [github-tag](#github-tag) | The tag name for the release where assets will be uploaded. | If a release triggered the action, its tag is used. Otherwise, inferred from `GITHUB_REF`. | `mc1.17.1-0.3.2` |
+| [github-generate-changelog](#github-generate-changelog) | Set to `true` to generate a changelog automatically for this release. Ignored if the GitHub Release already exists. | `true`, if `changelog` and `changelog-file` are not provided; otherwise, `false`. | `true` <br> `false` |
+| [github-draft](#github-draft) | Set to `true` to create a draft release. Ignored if the GitHub Release already exists. | `false` | `true` <br> `false` |
+| [github-prerelease](#github-prerelease) | Set to `true` to mark the release as a prerelease. Ignored if the GitHub Release already exists. | `false`, if `version-type` is `release`; otherwise, `true`. | `true` <br> `false` |
+| [github-commitish](#github-commitish) | Defines the commitish value that determines where the Git tag is created from. Ignored if the Git tag already exists. | The repository's default branch. | `dev` <br> `feature/86` |
+| [github-discussion](#github-discussion) | If specified, creates and links a discussion of the specified **EXISTING** category to the release. Ignored if the GitHub Release already exists. | - | `Announcements` |
+| [github-token](#github-token) | Your GitHub API token. | - | `${{ secrets.GITHUB_TOKEN }}` |
+| [files](#files) | An array of [globs](https://www.digitalocean.com/community/tools/glob) determining which files to upload. | `build/libs/!(*-@(dev\|sources\|javadoc)).jar` <br> `build/libs/*-@(dev\|sources\|javadoc).jar` | `build/libs/*.jar` |
+| [name](#name) | The name of the version. | A title of the release that triggered the action. | `Sodium 0.3.2 for Minecraft 1.17.1` |
+| [version](#version) | The version number. | A tag of the release that triggered the action. | `mc1.17.1-0.3.2` |
+| [version-type](#version-type) | The version type. | Will be parsed from the `version` value. | `alpha` <br> `beta` <br> `release` |
+| [changelog](#changelog) | The changelog for this version. | A body of the release that triggered the action. | `This release fixes a few more issues in Sodium 0.3 for Minecraft 1.17.1.` |
+| [changelog-file](#changelog-file) | A [glob](https://www.digitalocean.com/community/tools/glob) pointing to the changelog file. | - | `CHANGELOG.md` |
+| [loaders](#loaders) | An array of supported loaders. | A value specified in the metadata file. | `fabric` <br> `forge` <br> `quilt` <br> `rift` |
+| [environment](#environment) | A set of supported environments. | A value specified in the metadata file. | `client` <br> `server` <br> `client \| server` |
+| [game-versions](#game-versions) | An array of supported Minecraft versions. | A value specified in the metadata file. | `21w37a` <br> `>=1.17` <br> `[1.17,)` |
+| [dependencies](#dependencies) | An array of dependencies required by your project. | A value specified in the metadata file. | `fabric@0.40.0(required)` |
+| [game-version-filter](#game-version-filter) | Controls the method used to filter game versions. | `releases \| min-major \| min-minor` | `releases` <br> `min` <br> `max` <br> `none` |
+| [java](#java) | An array of Java versions compatible with your project. | - | `Java 8` <br> `Java 1.8` <br> `8` |
+| [retry-attempts](#retry-attempts) | Defines the maximum number of asset publishing attempts. | `2` | `2` <br> `10` <br> `-1` |
+| [retry-delay](#retry-delay) | Specifies the delay (in milliseconds) between asset publishing attempts. | `10000` | `1000` <br> `60000` <br> `0` |
+| [fail-mode](#fail-mode) | Controls how the action responds to errors during the mod publishing process. | `fail` | `fail` <br> `warn` <br> `skip` |
 
-Please note that any top-level property *(`name`, `version`, `dependencies`, `files`, etc.)* can be used as a target-specific one. This allows you to customize `mc-publish` to better meet your individual preferences and requirements. To illustrate, let's take a look at the following configuration:
+Please note that any top-level property *(`name`, `version`, `files`, etc.)* can also be used with a platform-specific prefix *(`modrinth-name`, `curseforge-version`, `github-files`, etc.)*. For example:
 
 ```yaml
 # Shared top-level properties
@@ -216,41 +209,6 @@ Your Modrinth API token. It's required if you want to publish your assets to Mod
 ```yaml
 modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 ```
-
-#### modrinth-featured
-
-Set to `true` to feature the version on Modrinth; `false` otherwise. Default value is:
-
-```yaml
-modrinth-featured: true
-```
-
-#### modrinth-unfeature-mode
-
-Sets the behavior for unfeaturing older Modrinth versions. Default value is `subset`, if [`modrinth-featured`](#modrinth-featured) is set to `true`; otherwise, `none`.
-
-```yaml
-modrinth-unfeature-mode: version-intersection | loader-subset
-```
-
-Available presets:
-
- - `none` - no Modrinth versions will be unfeatured.
- - `subset` - only those Modrinth versions which are considered a subset of the new one *(i.e., new release supports all of the version's mod loaders **and** game versions)* will be unfeatured.
- - `intersection` - only those Modrinth versions which intersects with the new one *(i.e., support at least one of the mod loaders and one of the game versions supported by the new release)* will be unfeatured.
- - `any` - all Modrinth versions will be unfeatured.
-
- If none of the given presets suits your needs, you can construct a new one from the following values via bitwise `OR`, like so - `game-version-intersection | loaders-subset`:
-
- - `game-version-subset`
- - `game-version-intersection`
- - `game-version-any`
- - `version-subset`
- - `version-intersection`
- - `version-any`
- - `loader-subset`
- - `loader-intersection`
- - `loader-any`
 
 #### curseforge-id
 
@@ -437,6 +395,25 @@ loaders: |
   forge
   quilt
 ```
+
+#### environment
+
+A set of supported environments. By default, `mc-publish` attempts to infer this value from your project's metadata file (e.g., `fabric.mod.json`, `mods.toml`, `quilt.mod.json`, etc.).
+
+```yaml
+environment: client | server
+```
+
+Available environments (can be combined using the logical OR operator, as shown above):
+
+- `client` - the project must be installed on the client.
+- `client?` - the project may be installed on the client, but it is not required.
+- `client*` - it is recommended to install the project on the client, but it is not required.
+- `server` - the project must be installed on the server.
+- `server?` - the project may be installed on the server, but it is not required.
+- `server*` - it is recommended to install the project on the server, but it is not required.
+- `singleplayer` - the project is supported in singleplayer, but not necessarily when connected to multiplayer servers.
+- `dedicated-server` - the project is supported on dedicated servers, but not necessarily in singleplayer.
 
 #### game-versions
 
@@ -685,26 +662,26 @@ Available values:
 
 ### 📤 Outputs
 
-| Name                                      | Description                                                                                            | Examples                                                                    |
-|-------------------------------------------|--------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
-| [modrinth-id](#modrinth-id-1)             | The unique identifier of your Modrinth project.                                                        | `"AANobbMI"`                                                                |
-| [modrinth-version](#modrinth-version)     | The unique identifier of the version published on Modrinth by this action.                             | `"Fz37KqRh"`                                                                |
-| [modrinth-url](#modrinth-url)             | The URL directing to the newly published version on Modrinth.                                          | `"https://modrinth.com/mod/sodium/version/mc1.17.1-0.3.4"`                  |
-| [modrinth-files](#modrinth-files)         | Array of objects, each containing details about the files published for the new version on Modrinth.   | `"[]"`                                                                      |
-| [curseforge-id](#curseforge-id-1)         | The unique identifier of your CurseForge project.                                                      | `"394468"`                                                                  |
-| [curseforge-version](#curseforge-version) | The unique identifier of the version published on CurseForge by this action.                           | `"3488820"`                                                                 |
-| [curseforge-url](#curseforge-url)         | The URL directing to the newly published version on CurseForge.                                        | `https://www.curseforge.com/api/v1/mods/394468/files/3488820/download`      |
-| [curseforge-files](#curseforge-files)     | Array of objects, each containing details about the files published for the new version on CurseForge. | `"[]"`                                                                      |
-| [github-repo](#github-repo)               | The full repository name on GitHub, formatted as 'username/repository'.                                | `"CaffeineMC/sodium-fabric"`                                                |
-| [github-tag](#github-tag-1)               | The Git tag associated with the new or updated release published on GitHub.                            | `"mc1.17.1-0.3.4"`                                                          |
-| [github-url](#github-url)                 | The URL directing to the newly published version on GitHub.                                            | `"https://github.com/CaffeineMC/sodium-fabric/releases/tag/mc1.17.1-0.3.4"` |
-| [github-files](#github-files)             | Array of objects, each containing details about the files published for the new version on GitHub.     | `"[]"`                                                                      |
+| Name | Description | Examples |
+|------|-------------|----------|
+| [modrinth-id](#modrinth-id-1) | The unique identifier of your Modrinth project. | `"AANobbMI"` |
+| [modrinth-version](#modrinth-version) | The unique identifier of the version published on Modrinth by this action. | `"Fz37KqRh"` |
+| [modrinth-url](#modrinth-url) | The URL directing to the newly published version on Modrinth. | `"https://modrinth.com/mod/sodium/version/mc1.17.1-0.3.4"` |
+| [modrinth-files](#modrinth-files) | Array of objects, each containing details about the files published for the new version on Modrinth. | `"[]"` |
+| [curseforge-id](#curseforge-id-1) | The unique identifier of your CurseForge project. | `"394468"` |
+| [curseforge-version](#curseforge-version) | The unique identifier of the version published on CurseForge by this action. | `"3488820"` |
+| [curseforge-url](#curseforge-url) | The URL directing to the newly published version on CurseForge. | `https://www.curseforge.com/api/v1/mods/394468/files/3488820/download` |
+| [curseforge-files](#curseforge-files) | Array of objects, each containing details about the files published for the new version on CurseForge. | `"[]"` |
+| [github-repo](#github-repo) | The full repository name on GitHub, formatted as 'username/repository'. | `"CaffeineMC/sodium-fabric"` |
+| [github-tag](#github-tag-1) | The Git tag associated with the new or updated release published on GitHub. | `"mc1.17.1-0.3.4"` |
+| [github-url](#github-url) | The URL directing to the newly published version on GitHub. | `"https://github.com/CaffeineMC/sodium-fabric/releases/tag/mc1.17.1-0.3.4"` |
+| [github-files](#github-files) | Array of objects, each containing details about the files published for the new version on GitHub. | `"[]"` |
 
 #### modrinth-id
 
 The unique identifier of your Modrinth project.
 
-```json
+```js
 "AANobbMI"
 ```
 
@@ -712,7 +689,7 @@ The unique identifier of your Modrinth project.
 
 The unique identifier of the version published on Modrinth by this action.
 
-```json
+```js
 "Fz37KqRh"
 ```
 
@@ -720,7 +697,7 @@ The unique identifier of the version published on Modrinth by this action.
 
 The URL directing to the newly published version on Modrinth.
 
-```json
+```js
 "https://modrinth.com/mod/sodium/version/mc1.17.1-0.3.4"
 ```
 
@@ -728,21 +705,21 @@ The URL directing to the newly published version on Modrinth.
 
 Array of objects, each containing details about the files published for the new version on Modrinth.
 
-```json5
-"[
+```js
+`[
   {
-    \"name\": \"sodium-fabric-mc1.17.1-0.3.4+build.13.jar\",
-    \"id\": \"85f5d67f0ce9e995e738eb6b60034bc919a1859d\",
-    \"url\": \"https://cdn.modrinth.com/data/AANobbMI/versions/mc1.17.1-0.3.4/sodium-fabric-mc1.17.1-0.3.4%2Bbuild.13.jar\"
+    "name": "sodium-fabric-mc1.17.1-0.3.4+build.13.jar",
+    "id": "85f5d67f0ce9e995e738eb6b60034bc919a1859d",
+    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/mc1.17.1-0.3.4/sodium-fabric-mc1.17.1-0.3.4%2Bbuild.13.jar"
   }
-]"
+]`
 ```
 
 #### curseforge-id
 
 The unique identifier of your CurseForge project.
 
-```json
+```js
 "394468"
 ```
 
@@ -750,7 +727,7 @@ The unique identifier of your CurseForge project.
 
 The unique identifier of the version published on CurseForge by this action.
 
-```json
+```js
 "3488820"
 ```
 
@@ -758,7 +735,7 @@ The unique identifier of the version published on CurseForge by this action.
 
 The URL directing to the newly published version on CurseForge.
 
-```json
+```js
 "https://www.curseforge.com/minecraft/mc-mods/sodium/files/3488820"
 ```
 
@@ -766,21 +743,21 @@ The URL directing to the newly published version on CurseForge.
 
 Array of objects, each containing details about the files published for the new version on CurseForge.
 
-```json5
-"[
+```js
+`[
   {
-    \"name\": \"sodium-fabric-mc1.17.1-0.3.4+build.13.jar\",
-    \"id\": 394468,
-    \"url\": \"https://www.curseforge.com/api/v1/mods/394468/files/3488820/download\"
+    "name": "sodium-fabric-mc1.17.1-0.3.4+build.13.jar",
+    "id": 394468,
+    "url": "https://www.curseforge.com/api/v1/mods/394468/files/3488820/download"
   }
-]"
+]`
 ```
 
 #### github-repo
 
 The full repository name on GitHub, formatted as 'username/repository'.
 
-```json
+```js
 "CaffeineMC/sodium-fabric"
 ```
 
@@ -788,7 +765,7 @@ The full repository name on GitHub, formatted as 'username/repository'.
 
 The Git tag associated with the new or updated release published on GitHub.
 
-```json
+```js
 "mc1.17.1-0.3.4"
 ```
 
@@ -796,7 +773,7 @@ The Git tag associated with the new or updated release published on GitHub.
 
 The URL directing to the newly published version on GitHub.
 
-```json
+```js
 "https://github.com/CaffeineMC/sodium-fabric/releases/tag/mc1.17.1-0.3.4"
 ```
 
@@ -804,12 +781,12 @@ The URL directing to the newly published version on GitHub.
 
 Array of objects, each containing details about the files published for the new version on GitHub.
 
-```json5
-"[
+```js
+`[
   {
-    \"name\": \"sodium-fabric-mc1.17.1-0.3.4+build.13.jar\",
-    \"id\": 53929869,
-    \"url\": \"https://github.com/CaffeineMC/sodium-fabric/releases/download/mc1.17.1-0.3.4/sodium-fabric-mc1.17.1-0.3.4%2Bbuild.13.jar\"
+    "name": "sodium-fabric-mc1.17.1-0.3.4+build.13.jar",
+    "id": 53929869,
+    "url": "https://github.com/CaffeineMC/sodium-fabric/releases/download/mc1.17.1-0.3.4/sodium-fabric-mc1.17.1-0.3.4%2Bbuild.13.jar"
   }
-]"
+]`
 ```
