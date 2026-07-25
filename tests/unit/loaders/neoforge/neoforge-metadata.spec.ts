@@ -49,8 +49,8 @@ describe("NeoForgeMetadata", () => {
         test("returns 'neoforge' by default", () => {
             const rawWithoutLoadersField = {
                 ...RAW_METADATA,
-                "mc-publish": {
-                    ...RAW_METADATA["mc-publish"],
+                "game-publish": {
+                    ...RAW_METADATA["game-publish"],
                     loaders: undefined,
                 },
             };
@@ -73,9 +73,9 @@ describe("NeoForgeMetadata", () => {
         });
 
         test("returns the same value as the 'environment' field in the custom payload", () => {
-            expect(NeoForgeMetadata.from({ "mc-publish": { environment: "client" } } as RawNeoForgeMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
-            expect(NeoForgeMetadata.from({ "mc-publish": { environment: "server" } } as RawNeoForgeMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
-            expect(NeoForgeMetadata.from({ "mc-publish": { environment: "both" } } as RawNeoForgeMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
+            expect(NeoForgeMetadata.from({ "game-publish": { environment: "client" } } as RawNeoForgeMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
+            expect(NeoForgeMetadata.from({ "game-publish": { environment: "server" } } as RawNeoForgeMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
+            expect(NeoForgeMetadata.from({ "game-publish": { environment: "both" } } as RawNeoForgeMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
         });
     });
 

@@ -49,7 +49,7 @@
   },
 
   "custom": {
-    "mc-publish": {
+    "game-publish": {
       "modrinth": "AANobbMI",
       "curseforge": 394468,
       "github": "mc1.18-0.4.0-alpha5",

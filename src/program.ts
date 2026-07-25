@@ -70,7 +70,7 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
         // unless it is explicitly provided in the github section.
         if (platform === PlatformType.GITHUB) {
             const platformSpecific = action.input[platform] as unknown as Record<string, unknown> | undefined;
-            const githubHasOwnName = platformSpecific && Object.prototype.hasOwnProperty.call(platformSpecific, "name") && platformSpecific.name != null;
+            const githubHasOwnName = platformSpecific && Object.hasOwn(platformSpecific, "name") && platformSpecific.name !== null && platformSpecific.name !== undefined;
             if (!githubHasOwnName) {
                 delete platformOptions.name;
             }
@@ -79,7 +79,7 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
             continue;
         }
 
-        const options = await fillInDefaultValues(platformOptions as any, platform, githubContext, metadataReader);
+        const options = await fillInDefaultValues(platformOptions as McPublishInput[typeof platform], platform, githubContext, metadataReader);
         const uploader = createPlatformUploader(platform, { logger, githubContext });
         try {
             action.output[platform as string] = await uploader.upload(options);

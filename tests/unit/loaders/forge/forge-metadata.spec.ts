@@ -49,8 +49,8 @@ describe("ForgeMetadata", () => {
         test("returns 'forge' by default", () => {
             const rawWithoutLoadersField = {
                 ...RAW_METADATA,
-                "mc-publish": {
-                    ...RAW_METADATA["mc-publish"],
+                "game-publish": {
+                    ...RAW_METADATA["game-publish"],
                     loaders: undefined,
                 },
             };
@@ -73,9 +73,9 @@ describe("ForgeMetadata", () => {
         });
 
         test("returns the same value as the 'environment' field in the custom payload", () => {
-            expect(ForgeMetadata.from({ "mc-publish": { environment: "client" } } as RawForgeMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
-            expect(ForgeMetadata.from({ "mc-publish": { environment: "server" } } as RawForgeMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
-            expect(ForgeMetadata.from({ "mc-publish": { environment: "both" } } as RawForgeMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
+            expect(ForgeMetadata.from({ "game-publish": { environment: "client" } } as RawForgeMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
+            expect(ForgeMetadata.from({ "game-publish": { environment: "server" } } as RawForgeMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
+            expect(ForgeMetadata.from({ "game-publish": { environment: "both" } } as RawForgeMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
         });
     });
 

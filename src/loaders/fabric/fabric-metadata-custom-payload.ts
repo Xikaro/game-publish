@@ -85,11 +85,11 @@ function _getLegacyFabricMetadataCustomPayload(metadata: RawFabricMetadata): Fab
  *
  * @deprecated
  *
- * Use `mc-publish` field instead of `modmanager` field.
+ * Use `game-publish` field instead of `modmanager` field.
  */
 const getLegacyFabricMetadataCustomPayload = deprecate(
     _getLegacyFabricMetadataCustomPayload,
-    "Use `mc-publish` field instead of `modmanager` field.",
+    "Use `game-publish` field instead of `modmanager` field.",
 );
 
 /**

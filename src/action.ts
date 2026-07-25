@@ -23,7 +23,7 @@ import { UploadedFile } from "@/platforms/uploaded-file";
 /**
  * Your one-stop GitHub Action for seamless Minecraft project publication across various platforms.
  */
-export const ACTION_NAME = "mc-publish";
+export const ACTION_NAME = "game-publish";
 
 /**
  * The input parameters for the action.
