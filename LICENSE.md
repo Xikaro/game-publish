@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2021-2026 Kira-NT
+Copyright (c) 2021-2026 Xikaro
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

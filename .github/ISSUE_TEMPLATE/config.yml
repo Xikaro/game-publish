@@ -1,11 +1,11 @@
 blank_issues_enabled: true
 contact_links:
   - name: Discussions
-    url: https://github.com/Kira-NT/mc-publish/discussions
+    url: https://github.com/Xikaro/game-publish/discussions
     about: |
       For general questions and assistance requests, consider using our GitHub Discussions space instead of opening an issue
 
   - name: Documentation
-    url: https://github.com/Kira-NT/mc-publish#mc-publish
+    url: https://github.com/Xikaro/game-publish#mc-publish
     about: |
       Explore our documentation to better understand how to integrate mc-publish into your workflows

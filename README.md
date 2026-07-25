@@ -1,7 +1,7 @@
 ## mc-publish
 
-[![Version](https://img.shields.io/github/v/release/Kira-NT/mc-publish?sort=date&label=version)](https://github.com/Kira-NT/mc-publish/releases/latest)
-[![License](https://img.shields.io/github/license/Kira-NT/mc-publish?cacheSeconds=36000)](https://github.com/Kira-NT/mc-publish/blob/HEAD/LICENSE.md)
+[![Version](https://img.shields.io/github/v/release/Xikaro/game-publish?sort=date&label=version)](https://github.com/Xikaro/game-publish/releases/latest)
+[![License](https://img.shields.io/github/license/Xikaro/game-publish?cacheSeconds=36000)](https://github.com/Xikaro/game-publish/blob/HEAD/LICENSE.md)
 
 `mc-publish` provides a unified interface for publishing mods, plugins, resource packs, and other project types to popular platforms such as Modrinth, GitHub Releases, and CurseForge. Designed with a zero-config approach in mind, it automatically resolves common values and minimizes boilerplate, while still offering lots of configuration options for more advanced users.
 
@@ -17,7 +17,7 @@ jobs:
     # ...
     steps:
       # ...
-      - uses: Kira-NT/mc-publish@v3
+      - uses: Xikaro/game-publish@v3
         with:
           # If your build toolchain doesn't place the resulting artifacts directly in build/libs/,
           # you will need to manually specify what you want to upload:
@@ -45,7 +45,7 @@ jobs:
     # ...
     steps:
       # ...
-      - uses: Kira-NT/mc-publish@v3
+      - uses: Xikaro/game-publish@v3
         with:
           modrinth-id: AANobbMI
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}

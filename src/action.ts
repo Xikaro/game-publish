@@ -249,14 +249,14 @@ export interface McPublishInput {
         token?: SecureString;
 
         /**
-         * An array of globs determining which files to upload.
-         */
-        files?: FileInfo[];
-
-        /**
          * The name of the version.
          */
         name?: string;
+
+        /**
+         * An array of globs determining which files to upload.
+         */
+        files?: FileInfo[];
 
         /**
          * The version number.
