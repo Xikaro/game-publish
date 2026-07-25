@@ -70,9 +70,9 @@ describe("FabricMetadata", () => {
         });
 
         test("returns the same value as the 'environment' field in the custom payload", () => {
-            expect(FabricMetadata.from({ custom: { "mc-publish": { environment: "client" } } } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
-            expect(FabricMetadata.from({ custom: { "mc-publish": { environment: "server" } } } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
-            expect(FabricMetadata.from({ custom: { "mc-publish": { environment: "*" } } } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
+            expect(FabricMetadata.from({ custom: { "game-publish": { environment: "client" } } } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
+            expect(FabricMetadata.from({ custom: { "game-publish": { environment: "server" } } } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
+            expect(FabricMetadata.from({ custom: { "game-publish": { environment: "*" } } } as RawFabricMetadata).environment).toBe(LoaderEnvironmentType.BOTH);
         });
     });
 

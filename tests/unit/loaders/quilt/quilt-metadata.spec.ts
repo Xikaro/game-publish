@@ -70,9 +70,9 @@ describe("QuiltMetadata", () => {
         });
 
         test("returns the same value as the 'environment' field in the custom payload", () => {
-            expect(QuiltMetadata.from({ "mc-publish": { environment: "client" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
-            expect(QuiltMetadata.from({ "mc-publish": { environment: "server" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
-            expect(QuiltMetadata.from({ "mc-publish": { environment: "*" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.ALL);
+            expect(QuiltMetadata.from({ "game-publish": { environment: "client" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
+            expect(QuiltMetadata.from({ "game-publish": { environment: "server" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
+            expect(QuiltMetadata.from({ "game-publish": { environment: "*" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.ALL);
         });
     });
 

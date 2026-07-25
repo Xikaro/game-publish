@@ -8,10 +8,10 @@
 # action.template.yml file instead. This will ensure that your changes are #
 #              properly reflected in the auto-generated file.              #
 # ######################################################################## #
-name: mc-publish
+name: game-publish
 description: Your one-stop GitHub Action for seamless Minecraft project
   publication across various platforms.
-author: Kira-NT
+author: Xikaro
 branding:
   color: purple
   icon: box
