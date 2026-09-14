@@ -12,6 +12,7 @@ const FILES = Object.freeze([
     "fabric.mod.json",
     "mods.toml",
     "quilt.mod.json",
+    "server-pack",
 ]) as string[];
 
 const DB = Object.freeze({
@@ -103,6 +104,14 @@ const DB = Object.freeze({
             url: "https://www.curseforge.com/api/v1/mods/5/files/6/download",
             version_id: 6,
         },
+
+        {
+            id: 7,
+            name: "server-pack",
+            project_id: 1,
+            url: "https://www.curseforge.com/api/v1/mods/1/files/7/download",
+            version_id: 1,
+        },
     ]),
 });
 
@@ -126,6 +135,7 @@ const CURSEFORGE_FETCH = createFakeFetch({
             const formData = body as FormData;
             const fileName = formData.get("file")?.["name"] as string;
             const metadata = JSON.parse(formData.get("metadata") as string) as CurseForgeVersionInitMetadata;
+            UPLOADED_METADATA.push(metadata);
             const dependencies = metadata.relations?.projects?.map(x => x.slug) || [];
             const unknownDependency = dependencies.find(x => !DB.projects.find(y => x === y.slug));
             const unknownGameVersion = metadata.gameVersions?.find(x => !project.game_versions.includes(x));
@@ -154,9 +164,12 @@ const CURSEFORGE_FETCH = createFakeFetch({
     },
 });
 
+let UPLOADED_METADATA = [] as CurseForgeVersionInitMetadata[];
+
 beforeEach(() => {
     const fakeFiles = FILES.reduce((a, b) => ({ ...a, [b]: "" }), {});
 
+    UPLOADED_METADATA = [];
     mockFs(fakeFiles);
 });
 
@@ -347,6 +360,48 @@ describe("CurseForgeUploadApiClient", () => {
                 name,
                 files: DB.files.filter(x => x.project_id === projectId).slice(0, fileCount),
             });
+        });
+
+        test("creates a new version with server pack files", async () => {
+            const api = new CurseForgeUploadApiClient({ fetch: CURSEFORGE_FETCH, token: "token" });
+
+            const expectedVersionId = 1;
+            const projectId = 1;
+            const name = "Mod v1.0.0";
+            const fileCount = 1;
+
+            const version = await api.createVersion({
+                project_id: projectId,
+                files: FILES.slice(0, fileCount),
+                server_files: ["server-pack"],
+                server_name: "Mod Server Pack v1.0.0",
+                name,
+                game_versions: ["1.19"],
+                loaders: ["fabric"],
+                java_versions: ["Java 17"],
+            });
+
+            expect(version).toEqual({
+                id: expectedVersionId,
+                project_id: projectId,
+                name,
+                files: DB.files.filter(x => x.project_id === projectId).slice(0, fileCount)
+                    .concat({ ...DB.files.find(x => x.id === 7), name: "Mod Server Pack v1.0.0" }),
+            });
+
+            expect(UPLOADED_METADATA).toHaveLength(2);
+
+            const primaryMetadata = UPLOADED_METADATA[0];
+            expect(primaryMetadata.isServerPack).toBeUndefined();
+            expect(primaryMetadata.parentFileID).toBeUndefined();
+            expect(primaryMetadata.displayName).toBe(name);
+            expect(primaryMetadata.gameVersions?.length).toBeGreaterThan(0);
+
+            const serverMetadata = UPLOADED_METADATA[1];
+            expect(serverMetadata.isServerPack).toBe(true);
+            expect(serverMetadata.parentFileID).toBe(expectedVersionId);
+            expect(serverMetadata.displayName).toBe("Mod Server Pack v1.0.0");
+            expect(serverMetadata.gameVersions).toBeUndefined();
         });
 
         test("creates a new version with dependencies", async () => {

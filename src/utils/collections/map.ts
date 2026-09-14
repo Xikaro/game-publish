@@ -225,27 +225,30 @@ export class ArrayMap<K, V> implements Map<K, V> {
     /**
      * Returns an iterator over the keys in the map.
      */
-    keys(): IterableIterator<K> {
-        return this._keys[Symbol.iterator]();
+    keys(): MapIterator<K> {
+        return this._keys[Symbol.iterator]() as unknown as MapIterator<K>;
     }
 
     /**
      * Returns an iterator over the values in the map.
      */
-    values(): IterableIterator<V> {
-        return this._values[Symbol.iterator]();
+    values(): MapIterator<V> {
+        return this._values[Symbol.iterator]() as unknown as MapIterator<V>;
     }
 
     /**
      * Returns an iterator over the entries in the map.
      */
-    *entries(): IterableIterator<[K, V]> {
+    entries(): MapIterator<[K, V]> {
         const keys = this._keys;
         const values = this._values;
 
-        for (let i = 0; i < keys.length; ++i) {
-            yield [keys[i], values[i]];
-        }
+        const iter = (function* (): Generator<[K, V]> {
+            for (let i = 0; i < keys.length; ++i) {
+                yield [keys[i], values[i]];
+            }
+        })();
+        return iter as unknown as MapIterator<[K, V]>;
     }
 
     /**
@@ -254,7 +257,7 @@ export class ArrayMap<K, V> implements Map<K, V> {
      * @param callbackFn - This function is called one time for each element in the map. It takes the value, key, and the map itself as arguments.
      * @param thisArg - An optional object to which `this` keyword can refer in the `callbackFn` function.
      */
-    forEach(callbackFn: (value: V, key: K, map: ArrayMap<K, V>) => void, thisArg?: unknown): void {
+    forEach(callbackFn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: unknown): void {
         callbackFn = thisArg === undefined ? callbackFn : callbackFn.bind(thisArg);
         const keys = this._keys;
         const values = this._values;
@@ -267,7 +270,7 @@ export class ArrayMap<K, V> implements Map<K, V> {
     /**
      * Returns an iterator over the entries in the map.
      */
-    [Symbol.iterator](): IterableIterator<[K, V]> {
+    [Symbol.iterator](): MapIterator<[K, V]> {
         return this.entries();
     }
 

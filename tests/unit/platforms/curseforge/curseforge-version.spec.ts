@@ -56,4 +56,34 @@ describe("packCurseForgeVersionInit", () => {
             relations: { projects: version.dependencies },
         });
     });
+
+    test("returns correct form data when packing a server pack file", () => {
+        const version: CurseForgeVersionInit = Object.freeze({
+            project_id: 0,
+            changelog: "Initial release",
+            changelog_type: "markdown",
+            name: "Version 1.0",
+            server_name: "Version 1.0 Server Pack",
+            is_server_pack: true,
+            version_type: VersionType.RELEASE,
+            dependencies: [{ slug: "mod-id", type: CurseForgeDependencyType.REQUIRED_DEPENDENCY }],
+        });
+        const gameVersions = [1, 2, 3];
+        const file = "path/to/server-pack";
+        const parentFileId = 123;
+
+        const result = packCurseForgeVersionInit(version, gameVersions, file, parentFileId);
+
+        expect(result.file).toBeInstanceOf(FileInfo);
+        expect(result.metadata).toEqual({
+            changelog: version.changelog,
+            changelogType: version.changelog_type,
+            displayName: version.server_name,
+            parentFileID: parentFileId,
+            isServerPack: true,
+            gameVersions: undefined,
+            releaseType: version.version_type,
+            relations: undefined,
+        });
+    });
 });

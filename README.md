@@ -105,6 +105,8 @@ jobs:
 | [modrinth-token](#modrinth-token) | Your Modrinth API token. | - | `${{ secrets.MODRINTH_TOKEN }}` |
 | [curseforge-id](#curseforge-id) | The unique identifier of your CurseForge project. | A value specified in the metadata file. | `394468` |
 | [curseforge-token](#curseforge-token) | Your CurseForge API token. | - | `${{ secrets.CURSEFORGE_TOKEN }}` |
+| [curseforge-server-files](#curseforge-server-files) | An array of [globs](https://www.digitalocean.com/community/tools/glob) determining which server pack files to upload to CurseForge. | - | `release/*-server.zip` |
+| [curseforge-server-name](#curseforge-server-name) | The display name of the server pack files. | The name of the server pack file. | `Server Pack v1.0.0` |
 | [github-tag](#github-tag) | The tag name for the release where assets will be uploaded. | If a release triggered the action, its tag is used. Otherwise, inferred from `GITHUB_REF`. | `mc1.17.1-0.3.2` |
 | [github-generate-changelog](#github-generate-changelog) | Set to `true` to generate a changelog automatically for this release. Ignored if the GitHub Release already exists. | `true`, if `changelog` and `changelog-file` are not provided; otherwise, `false`. | `true` <br> `false` |
 | [github-draft](#github-draft) | Set to `true` to create a draft release. Ignored if the GitHub Release already exists. | `false` | `true` <br> `false` |
@@ -112,6 +114,12 @@ jobs:
 | [github-commitish](#github-commitish) | Defines the commitish value that determines where the Git tag is created from. Ignored if the Git tag already exists. | The repository's default branch. | `dev` <br> `feature/86` |
 | [github-discussion](#github-discussion) | If specified, creates and links a discussion of the specified **EXISTING** category to the release. Ignored if the GitHub Release already exists. | - | `Announcements` |
 | [github-token](#github-token) | Your GitHub API token. | - | `${{ secrets.GITHUB_TOKEN }}` |
+| [github-repository](#github-repository) | The repository where the release will be created, formatted as `username/repository`. | The current repository. | `CaffeineMC/sodium-fabric` |
+| [github-overwrite-files](#github-overwrite-files) | Set to `true` to replace files that already exist in the release; `false` to skip uploading such files. Only applies when updating an existing release. | `true` | `true` <br> `false` |
+| [github-make-latest](#github-make-latest) | Specifies whether this release should be marked as the latest release. Only applies when creating a new release. | GitHub defaults for newly published releases. | `true` <br> `false` <br> `legacy` |
+| [github-append-body](#github-append-body) | Set to `true` to append the changelog to the body of an existing release instead of replacing it. Only applies when updating an existing release and a changelog is provided. | `false` | `true` <br> `false` |
+| [github-previous-tag](#github-previous-tag) | The tag used as the base for generating release notes. Only used when `github-generate-changelog` is `true`. | - | `mc1.17.1-0.3.1` |
+| [github-preserve-order](#github-preserve-order) | Set to `true` to upload files sequentially in the specified order; `false` (default) to upload files concurrently, which is faster. | `false` | `true` <br> `false` |
 | [files](#files) | An array of [globs](https://www.digitalocean.com/community/tools/glob) determining which files to upload. | `build/libs/!(*-@(dev\|sources\|javadoc)).jar` <br> `build/libs/*-@(dev\|sources\|javadoc).jar` | `build/libs/*.jar` |
 | [name](#name) | The name of the version. | A title of the release that triggered the action. | `Sodium 0.3.2 for Minecraft 1.17.1` |
 | [version](#version) | The version number. | A tag of the release that triggered the action. | `mc1.17.1-0.3.2` |
@@ -263,6 +271,24 @@ Your CurseForge API token. It's required if you want to publish your assets to C
 curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 ```
 
+#### curseforge-server-files
+
+An array of [globs](https://www.digitalocean.com/community/tools/glob) determining which server pack files to upload to CurseForge.
+
+These files are uploaded as separate files of the same version and are linked to the primary file (the first file matched by [`files`](#files)) as server packs.
+
+```yaml
+curseforge-server-files: release/*-server.zip
+```
+
+#### curseforge-server-name
+
+The display name of the server pack files. If not provided, the name of the server pack file is used instead.
+
+```yaml
+curseforge-server-name: Server Pack v1.0.0
+```
+
 #### github-tag
 
 The tag name for the release where assets will be uploaded. If a release triggered the action, its tag is used. Otherwise, inferred from `GITHUB_REF`.
@@ -317,6 +343,54 @@ Your GitHub API token. It's required if you want to publish your assets to GitHu
 
 ```yaml
 github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+#### github-repository
+
+The repository where the release will be created, formatted as `username/repository`. Defaults to the current repository. Useful for publishing releases to a different repository than the one the action is running on.
+
+```yaml
+github-repository: CaffeineMC/sodium-fabric
+```
+
+#### github-overwrite-files
+
+Set to `true` to replace files that already exist in the release; `false` to skip uploading such files. Only applies when updating an existing release. Default value is `true`.
+
+```yaml
+github-overwrite-files: false
+```
+
+#### github-make-latest
+
+Specifies whether this release should be marked as the latest release. Accepts `true`, `false`, or `legacy`. `legacy` determines the latest release based on the release creation date and higher semantic version. Drafts and prereleases cannot be set as latest. Only applies when creating a new release. Default value depends on GitHub's own behavior for newly published releases.
+
+```yaml
+github-make-latest: legacy
+```
+
+#### github-append-body
+
+Set to `true` to append the changelog to the body of an existing release instead of replacing it. Only applies when updating an existing release and a changelog is provided. Default value is `false`.
+
+```yaml
+github-append-body: true
+```
+
+#### github-previous-tag
+
+The tag used as the base for generating release notes. Only used when [`github-generate-changelog`](#github-generate-changelog) is `true`. The generated notes are pre-pended to the specified changelog, if any.
+
+```yaml
+github-previous-tag: mc1.17.1-0.3.1
+```
+
+#### github-preserve-order
+
+Set to `true` to upload files sequentially, in the order they appear in the [`files`](#files) input; `false` (default) to upload them concurrently, which is faster.
+
+```yaml
+github-preserve-order: true
 ```
 
 #### files

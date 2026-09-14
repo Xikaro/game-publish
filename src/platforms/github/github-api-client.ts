@@ -1,6 +1,6 @@
 import { FileInfo } from "@/utils/io";
 import { Fetch, HttpRequest, HttpResponse, createFetch, defaultResponse, throwOnError } from "@/utils/net";
-import { GitHubRelease, GitHubReleaseAssetsPatch, GitHubReleaseIdentifier, GitHubReleaseInit, GitHubReleasePatch, packGitHubReleaseInit, packGitHubReleasePatch } from "./github-release";
+import { GitHubRelease, GitHubReleaseAssetsPatch, GitHubReleaseIdentifier, GitHubReleaseInit, GitHubReleaseNotes, GitHubReleaseNotesInit, GitHubReleasePatch, packGitHubReleaseInit, packGitHubReleasePatch } from "./github-release";
 import { GitHubReleaseAsset, GitHubReleaseAssetIdentifier, GitHubReleaseAssetInit } from "./github-release-asset";
 
 /**
@@ -88,7 +88,7 @@ export class GitHubApiClient {
     async createRelease(release: GitHubReleaseInit): Promise<GitHubRelease> {
         const { owner, repo, assets } = release;
 
-        const data = packGitHubReleaseInit(release);
+        const data = await this.prepareReleaseMutation(packGitHubReleaseInit(release), owner, repo);
         const response = await this._fetch(`/repos/${owner}/${repo}/releases`, HttpRequest.post().json(data));
         const createdRelease = await response.json() as GitHubRelease;
 
@@ -109,10 +109,10 @@ export class GitHubApiClient {
         const { owner, repo, id, assets } = release;
 
         if (assets?.length) {
-            await this.updateReleaseAssets({ owner, repo, id, assets });
+            await this.updateReleaseAssets({ owner, repo, id, assets, overwrite_files: release.overwrite_files, preserve_order: release.preserve_order });
         }
 
-        const data = packGitHubReleasePatch(release);
+        const data = await this.prepareReleaseMutation(packGitHubReleasePatch(release), owner, repo);
         const shouldUpdate = Object.values(data).filter(x => x !== undefined).length !== 0;
         if (!shouldUpdate) {
             return await this.getRelease(release);
@@ -130,21 +130,88 @@ export class GitHubApiClient {
      * @returns An array of updated release assets.
      */
     async updateReleaseAssets(releaseAssets: GitHubReleaseAssetsPatch): Promise<GitHubReleaseAsset[]> {
-        const assets = [] as GitHubReleaseAsset[];
-        const release = await this.getRelease(releaseAssets);
+        const { owner, repo, id, assets, overwrite_files, preserve_order } = releaseAssets;
+        const release = await this.getRelease({ owner, repo, id });
 
-        for (const asset of releaseAssets.assets) {
-            const file = FileInfo.of(asset);
-            const existingAsset = release.assets.find(x => x.name === file.name || x.name === file.path);
-            if (existingAsset) {
-                await this.deleteReleaseAsset({ owner: releaseAssets.owner, repo: releaseAssets.repo, id: existingAsset.id });
-            }
-
-            const uploadedAsset = await this.uploadReleaseAsset({ upload_url: release.upload_url, asset: file });
-            assets.push(uploadedAsset);
+        if (!release) {
+            throw new Error(`GitHub release ${id} was not found.`);
         }
 
-        return assets;
+        const uploadAsset = async (asset: FileInfo | string): Promise<GitHubReleaseAsset> => {
+            const file = FileInfo.of(asset);
+            const existingAsset = release.assets.find(x => x.name === file.name || x.name === file.path);
+
+            if (existingAsset) {
+                if (overwrite_files === false) {
+                    return existingAsset;
+                }
+                await this.deleteReleaseAsset({ owner, repo, id: existingAsset.id });
+            }
+
+            return await this.uploadReleaseAsset({ upload_url: release.upload_url, asset: file });
+        };
+
+        if (preserve_order) {
+            const uploadedAssets = [] as GitHubReleaseAsset[];
+            for (const asset of assets) {
+                uploadedAssets.push(await uploadAsset(asset));
+            }
+            return uploadedAssets;
+        }
+
+        return await Promise.all(assets.map(uploadAsset));
+    }
+
+    /**
+     * Requests GitHub to generate the release notes for the specified tag.
+     *
+     * @param release - The information for the release notes to generate.
+     *
+     * @returns The generated release notes.
+     */
+    async generateReleaseNotes(release: GitHubReleaseNotesInit): Promise<GitHubReleaseNotes> {
+        const { owner, repo, tag_name, target_commitish, previous_tag_name } = release;
+
+        const data = { tag_name, target_commitish, previous_tag_name };
+        const response = await this._fetch(`/repos/${owner}/${repo}/releases/generate-notes`, HttpRequest.post().json(data));
+        return await response.json();
+    }
+
+    /**
+     * Resolves the release body and relevant parameters for a release mutation,
+     * generating the release notes via the GitHub API when requested.
+     *
+     * @param data - The packed release mutation parameters.
+     * @param owner - The account owner of the repository.
+     * @param repo - The name of the repository.
+     *
+     * @returns The prepared mutation parameters, ready to be sent to the GitHub API.
+     */
+    private async prepareReleaseMutation<T extends {
+        tag_name?: string;
+        target_commitish?: string;
+        body?: string;
+        generate_release_notes?: boolean;
+        previous_tag_name?: string;
+    }>(data: T, owner: string, repo: string): Promise<T> {
+        if (!data.generate_release_notes || !data.previous_tag_name || !data.tag_name) {
+            return data;
+        }
+
+        const notes = await this.generateReleaseNotes({
+            owner,
+            repo,
+            tag_name: data.tag_name,
+            target_commitish: data.target_commitish,
+            previous_tag_name: data.previous_tag_name,
+        });
+
+        return {
+            ...data,
+            generate_release_notes: false,
+            previous_tag_name: undefined,
+            body: data.body ? `${data.body}\n\n${notes.body}` : notes.body,
+        };
     }
 
     /**
@@ -164,6 +231,28 @@ export class GitHubApiClient {
 
         const response = await this._fetch(`${url}?name=${fileName}`, HttpRequest.post().with(fileContent));
         return await response.json();
+    }
+
+    /**
+     * Deletes a GitHub release.
+     *
+     * @param release - The identifier for the release to delete.
+     *
+     * @returns `true` if the release was deleted successfully, `false` otherwise.
+     */
+    async deleteRelease(release: GitHubReleaseIdentifier): Promise<boolean> {
+        const { owner, repo, id } = release;
+
+        if (typeof id !== "number") {
+            const existing = await this.getRelease(release);
+            if (!existing) {
+                return false;
+            }
+            return this.deleteRelease({ owner, repo, id: existing.id });
+        }
+
+        const response = await this._fetch(`/repos/${owner}/${repo}/releases/${id}`, HttpRequest.delete());
+        return response.ok;
     }
 
     /**

@@ -5,6 +5,7 @@ import { PlatformType } from "@/platforms/platform-type";
 import { $i } from "@/utils/collections";
 import { IGNORE_CASE_AND_NON_WORD_CHARACTERS_EQUALITY_COMPARER } from "@/utils/comparison";
 import { ArgumentError } from "@/utils/errors";
+import { SecureString } from "@/utils/security";
 import { ModrinthApiClient } from "./modrinth-api-client";
 import { ModrinthDependency } from "./modrinth-dependency";
 import { ModrinthDependencyType } from "./modrinth-dependency-type";
@@ -33,6 +34,11 @@ export type ModrinthUploadReport = UploadReport;
  */
 export class ModrinthUploader extends GenericPlatformUploader<ModrinthUploaderOptions, ModrinthUploadRequest, ModrinthUploadReport> {
     /**
+     * The token used for the last upload, retained for rollback.
+     */
+    private _token?: SecureString;
+
+    /**
      * Constructs a new {@link ModrinthUploader} instance.
      *
      * @param options - The options to use for the uploader.
@@ -57,6 +63,7 @@ export class ModrinthUploader extends GenericPlatformUploader<ModrinthUploaderOp
         ArgumentError.throwIfNullOrEmpty(request.loaders, "request.loaders", "At least one loader should be specified to upload files to Modrinth.");
         ArgumentError.throwIfNullOrEmpty(request.gameVersions, "request.gameVersions", "At least one game version should be specified to upload files to Modrinth.");
 
+        this._token = request.token;
         const api = new ModrinthApiClient({ token: request.token.unwrap(), fetch: this._fetch });
         const unfeatureMode = request.unfeatureMode ?? (request.featured ? ModrinthUnfeatureMode.SUBSET : ModrinthUnfeatureMode.NONE);
 
@@ -70,6 +77,34 @@ export class ModrinthUploader extends GenericPlatformUploader<ModrinthUploaderOp
             url: `https://modrinth.com/${project.project_type}/${project.slug}/version/${version.id}`,
             files: version.files.map(x => ({ id: x.hashes.sha1, name: x.filename, url: x.url })),
         };
+    }
+
+    /**
+     * @inheritdoc
+     */
+    async rollback(report: ModrinthUploadReport): Promise<void> {
+        const token = this._token;
+        if (!token) {
+            this._logger.debug("Cannot roll back Modrinth version: no token available.");
+            return;
+        }
+
+        if (!report?.version) {
+            this._logger.warn("⚠️ Cannot roll back Modrinth version: insufficient report data.");
+            return;
+        }
+
+        try {
+            const api = new ModrinthApiClient({ token: token.unwrap(), fetch: this._fetch });
+            const deleted = await api.deleteVersion(report.version);
+            if (deleted) {
+                this._logger.info(`🗑️ Rolled back Modrinth version '${report.version}'`);
+            } else {
+                this._logger.warn(`⚠️ Could not delete Modrinth version '${report.version}' (it may not exist anymore)`);
+            }
+        } catch (e) {
+            this._logger.warn(`⚠️ Failed to roll back Modrinth version '${report.version}': ${e}`);
+        }
     }
 
     /**

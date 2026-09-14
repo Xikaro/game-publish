@@ -128,9 +128,12 @@ export class CurseForgeUploadApiClient {
         const gameVersionIdVariants = await this.getGameVersionIdVariants(version);
         let createdVersion = undefined as CurseForgeVersion;
 
-        for (const file of version.files || []) {
+        const files = (version.files || []).map(file => ({ file, isServerPack: false }))
+            .concat((version.server_files || []).map(file => ({ file, isServerPack: true })));
+
+        for (const { file, isServerPack } of files) {
             const fileData: CurseForgeFileInit = {
-                version,
+                version: isServerPack ? { ...version, name: undefined, is_server_pack: true } : version,
                 file,
                 game_versions: gameVersionIdVariants,
                 version_id: createdVersion?.id,
@@ -175,6 +178,25 @@ export class CurseForgeUploadApiClient {
             project_id: projectId,
             version_id: file.version_id || id,
         };
+    }
+
+    /**
+     * Deletes the specified file from a CurseForge project.
+     *
+     * @remarks
+     *
+     * This is a best-effort operation: CurseForge does not guarantee that
+     * deletion is available for every file or token, so failures should be
+     * treated as warnings rather than fatal errors.
+     *
+     * @param projectId - The identifier of the project the file belongs to.
+     * @param fileId - The identifier of the file to delete.
+     *
+     * @returns `true` if the file was deleted successfully, `false` otherwise.
+     */
+    async deleteFile(projectId: number, fileId: number): Promise<boolean> {
+        const response = await this._fetch(`/projects/${projectId}/files/${fileId}`, HttpRequest.delete());
+        return response.ok;
     }
 
     /**

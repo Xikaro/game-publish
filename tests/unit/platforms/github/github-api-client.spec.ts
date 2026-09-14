@@ -32,6 +32,22 @@ const GITHUB_FETCH = createFakeFetch({
     },
 
     POST: {
+        "^\\/repos\\/([\\w-]+)\\/([\\w-]+)\\/releases\\/generate-notes$": ([owner, repo], { body }) => {
+            const repoPath = `/${owner}/${repo}/`;
+            const futureRelease = DB.releases.find(x => x.url.includes(repoPath));
+
+            if (!futureRelease) {
+                return HttpResponse.text("Invalid request", { status: 400 });
+            }
+
+            const init = JSON.parse(body as string);
+            if (init.tag_name !== futureRelease.tag_name || init.previous_tag_name !== "0.2.0+1.20.3") {
+                throw new Error(`Unexpected release notes request: '${body}'`);
+            }
+
+            return { name: futureRelease.name, body: futureRelease.body };
+        },
+
         "^\\/repos\\/([\\w-]+)\\/([\\w-]+)\\/releases": ([owner, repo], { body }) => {
             const repoPath = `/${owner}/${repo}/`;
             const release = JSON.parse(body as string) as GitHubReleaseInit;
@@ -244,6 +260,22 @@ describe("GitHubApiClient", () => {
             const success = await api.deleteReleaseAsset({ owner: "Xikaro", repo: "packed-inventory", id: -42 });
 
             expect(success).toBe(false);
+        });
+    });
+
+    describe("generateReleaseNotes", () => {
+        test("generates release notes for the specified tag", async () => {
+            const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
+            const expectedRelease = DB.releases.find(x => x.id === 135474639);
+
+            const notes = await api.generateReleaseNotes({
+                owner: "Xikaro",
+                repo: "packed-inventory",
+                tag_name: expectedRelease.tag_name,
+                previous_tag_name: "0.2.0+1.20.3",
+            });
+
+            expect(notes).toEqual({ name: expectedRelease.name, body: expectedRelease.body });
         });
     });
 });

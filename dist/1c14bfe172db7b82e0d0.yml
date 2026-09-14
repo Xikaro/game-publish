@@ -64,6 +64,13 @@ inputs:
     description: Your Modrinth API token.
     required: false
     default: ${undefined}
+  modrinth-rollback:
+    type: boolean
+    description: Set to true to delete the already published versions on all
+      platforms if publishing to any of the platforms fails. Prevents partially
+      published releases.
+    default: ${undefined}
+    required: false
   curseforge-id:
     type: string
     description: The unique identifier of your CurseForge project.
@@ -74,6 +81,24 @@ inputs:
     description: Your CurseForge API token.
     required: false
     default: ${undefined}
+  curseforge-server-files:
+    type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
+    description: An array of globs determining which server pack files to upload to
+      CurseForge.
+    required: false
+    default: ${undefined}
+  curseforge-server-name:
+    type: string
+    description: The display name of the server pack files.
+    required: false
+    default: ${undefined}
+  curseforge-rollback:
+    type: boolean
+    description: Set to true to delete the already published versions on all
+      platforms if publishing to any of the platforms fails. Prevents partially
+      published releases.
+    default: ${undefined}
+    required: false
   github-tag:
     type: string
     description: The tag name for the release where assets will be uploaded.
@@ -121,6 +146,52 @@ inputs:
     description: The name of the version.
     required: false
     default: ${undefined}
+  github-repository:
+    type: string
+    description: The repository where the release will be created, formatted as
+      'username/repository'. Defaults to the current repository.
+    required: false
+    default: ${undefined}
+  github-overwrite-files:
+    type: boolean
+    description: Set to true to replace files that already exist in the release;
+      false to skip uploading such files. Only applies when updating an existing
+      release.
+    default: true
+    required: false
+  github-make-latest:
+    type: string
+    description: Specifies whether this release should be marked as the latest
+      release. Accepts 'true', 'false', or 'legacy'. Drafts and prereleases
+      cannot be set as latest. Only applies when creating a new release.
+    required: false
+    default: ${undefined}
+  github-append-body:
+    type: boolean
+    description: Set to true to append the changelog to the body of an existing
+      release instead of replacing it. Only applies when updating an existing
+      release and a changelog is provided.
+    required: false
+    default: ${undefined}
+  github-previous-tag:
+    type: string
+    description: The tag used as the base for generating release notes. Only used
+      when 'github-generate-changelog' is true.
+    required: false
+    default: ${undefined}
+  github-preserve-order:
+    type: boolean
+    description: Set to true to upload files sequentially in the specified order;
+      false (default) to upload files concurrently, which is faster.
+    required: false
+    default: ${undefined}
+  github-rollback:
+    type: boolean
+    description: Set to true to delete the already published versions on all
+      platforms if publishing to any of the platforms fails. Prevents partially
+      published releases.
+    default: ${undefined}
+    required: false
   files:
     type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
     description: An array of globs determining which files to upload.
@@ -220,6 +291,13 @@ inputs:
     description: Controls how the action responds to errors during the mod
       publishing process.
     default: fail
+    required: false
+  rollback:
+    type: boolean
+    description: Set to true to delete the already published versions on all
+      platforms if publishing to any of the platforms fails. Prevents partially
+      published releases.
+    default: true
     required: false
   modrinth-files:
     type: utils.io.FileInfo[]:{findFiles}?processSeparately=false

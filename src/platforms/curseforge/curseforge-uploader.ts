@@ -4,6 +4,7 @@ import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 import { PlatformType } from "@/platforms/platform-type";
 import { GenericPlatformUploader, GenericPlatformUploaderOptions } from "@/platforms/generic-platform-uploader";
 import { ArgumentError } from "@/utils/errors";
+import { SecureString } from "@/utils/security";
 import { stringEquals } from "@/utils/string-utils";
 import { CurseForgeDependency } from "./curseforge-dependency";
 import { CurseForgeDependencyType } from "./curseforge-dependency-type";
@@ -33,6 +34,11 @@ export type CurseForgeUploadReport = UploadReport;
  */
 export class CurseForgeUploader extends GenericPlatformUploader<CurseForgeUploaderOptions, CurseForgeUploadRequest, CurseForgeUploadReport> {
     /**
+     * The token used for the last upload, retained for rollback.
+     */
+    private _token?: SecureString;
+
+    /**
      * Constructs a new {@link CurseForgeUploader} instance.
      *
      * @param options - The options to use for the uploader.
@@ -56,6 +62,7 @@ export class CurseForgeUploader extends GenericPlatformUploader<CurseForgeUpload
         ArgumentError.throwIfNullOrEmpty(request.loaders, "request.loaders", "At least one loader should be specified to upload files to CurseForge.");
         ArgumentError.throwIfNullOrEmpty(request.gameVersions, "request.gameVersions", "At least one game version should be specified to upload files to CurseForge.");
 
+        this._token = request.token;
         const api = new CurseForgeUploadApiClient({ token: request.token.unwrap(), fetch: this._fetch });
         const eternalApi = new CurseForgeEternalApiClient({ fetch: this._fetch });
 
@@ -128,6 +135,7 @@ export class CurseForgeUploader extends GenericPlatformUploader<CurseForgeUpload
             java_versions: request.java,
             loaders: request.loaders,
             files: request.files,
+            server_files: request.serverFiles,
             dependencies,
             environments,
         });
@@ -155,5 +163,34 @@ export class CurseForgeUploader extends GenericPlatformUploader<CurseForgeUpload
             .filter((x, i, self) => i === self.findIndex(y => stringEquals(x.slug, y.slug, { ignoreCase: true })));
 
         return uniqueCurseForgeDependencies;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    async rollback(report: CurseForgeUploadReport): Promise<void> {
+        const token = this._token;
+        if (!token) {
+            this._logger.debug("Cannot roll back CurseForge version: no token available.");
+            return;
+        }
+
+        if (!report?.version) {
+            this._logger.warn("⚠️ Cannot roll back CurseForge version: insufficient report data.");
+            return;
+        }
+
+        try {
+            const api = new CurseForgeUploadApiClient({ token: token.unwrap(), fetch: this._fetch });
+            // Delete the main version file
+            const deleted = await api.deleteFile(report.id, report.version);
+            if (deleted) {
+                this._logger.info(`🗑️ Rolled back CurseForge version '${report.version}'`);
+            } else {
+                this._logger.warn(`⚠️ Could not delete CurseForge version '${report.version}' (it may not exist anymore)`);
+            }
+        } catch (e) {
+            this._logger.warn(`⚠️ Failed to roll back CurseForge version '${report.version}': ${e}`);
+        }
     }
 }

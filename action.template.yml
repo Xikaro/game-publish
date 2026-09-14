@@ -51,6 +51,9 @@ inputs:
   modrinth-token:
     type: utils.security.SecureString
     description: Your Modrinth API token.
+  modrinth-rollback:
+    type: boolean
+    description: Set to true to delete the already published versions on all platforms if publishing to this platform fails. Overrides the global 'rollback' option.
 
   curseforge-id:
     type: string
@@ -58,6 +61,15 @@ inputs:
   curseforge-token:
     type: utils.security.SecureString
     description: Your CurseForge API token.
+  curseforge-server-files:
+    type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
+    description: An array of globs determining which server pack files to upload to CurseForge.
+  curseforge-server-name:
+    type: string
+    description: The display name of the server pack files.
+  curseforge-rollback:
+    type: boolean
+    description: Set to true to delete the already published versions on all platforms if publishing to this platform fails. Overrides the global 'rollback' option.
 
   github-tag:
     type: string
@@ -83,6 +95,28 @@ inputs:
   github-name:
     type: string
     description: The name of the version.
+  github-repository:
+    type: string
+    description: The repository where the release will be created, formatted as 'username/repository'. Defaults to the current repository.
+  github-overwrite-files:
+    type: boolean
+    description: Set to true to replace files that already exist in the release; false to skip uploading such files. Only applies when updating an existing release.
+    default: true
+  github-make-latest:
+    type: string
+    description: Specifies whether this release should be marked as the latest release. Accepts 'true', 'false', or 'legacy'. Drafts and prereleases cannot be set as latest. Only applies when creating a new release.
+  github-append-body:
+    type: boolean
+    description: Set to true to append the changelog to the body of an existing release instead of replacing it. Only applies when updating an existing release and a changelog is provided.
+  github-previous-tag:
+    type: string
+    description: The tag used as the base for generating release notes. Only used when 'github-generate-changelog' is true.
+  github-preserve-order:
+    type: boolean
+    description: Set to true to upload files sequentially in the specified order; false (default) to upload files concurrently, which is faster.
+  github-rollback:
+    type: boolean
+    description: Set to true to delete the already published versions on all platforms if publishing to this platform fails. Overrides the global 'rollback' option.
 
   files:
     type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
@@ -156,6 +190,10 @@ inputs:
     type: utils.errors.FailMode
     description: Controls how the action responds to errors during the mod publishing process.
     default: fail
+  rollback:
+    type: boolean
+    description: Set to true to delete the already published versions on all platforms if publishing to any of the platforms fails. Prevents partially published releases.
+    default: true
 
 outputs:
   modrinth-id:

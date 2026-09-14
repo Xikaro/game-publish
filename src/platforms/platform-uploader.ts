@@ -24,6 +24,15 @@ export interface PlatformUploader<TRequest, TReport> {
      * @returns A report generated after the upload.
      */
     upload(request: TRequest): Promise<TReport>;
+
+    /**
+     * Reverts the effects of a previously successful upload.
+     * Called when a subsequent platform fails and rollback is enabled.
+     * Implementations should log warnings and never throw.
+     *
+     * @param report - The report returned by a prior {@link upload} call.
+     */
+    rollback(report: TReport): Promise<void>;
 }
 
 /**

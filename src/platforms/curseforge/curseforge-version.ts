@@ -93,6 +93,26 @@ export interface CurseForgeVersionInit {
      * A list of files that should be attached to the version.
      */
     files?: (FileInfo | string)[];
+
+    /**
+     * A list of server pack files that should be attached to the version.
+     *
+     * These files are linked to the primary file via `parentFileID`
+     * and marked as server packs (`isServerPack`).
+     */
+    server_files?: (FileInfo | string)[];
+
+    /**
+     * The display name for the server pack files.
+     */
+    server_name?: string;
+
+    /**
+     * A boolean indicating if the uploaded file is a server pack.
+     *
+     * If true, the file is linked to the parent file via `parentFileID`.
+     */
+    is_server_pack?: boolean;
 }
 
 /**
@@ -122,6 +142,13 @@ export interface CurseForgeVersionInitMetadata {
      * The parent file of this file, if any.
      */
     parentFileID?: number;
+
+    /**
+     * A boolean indicating if this file is a server pack.
+     *
+     * If true, the `parentFileID` must be provided.
+     */
+    isServerPack?: boolean;
 
     /**
      * A list of supported game versions. See the Game Versions API for details.
@@ -184,8 +211,9 @@ export function packCurseForgeVersionInit(version: CurseForgeVersionInit, gameVe
     const metadata: CurseForgeVersionInitMetadata = {
         changelog: version.changelog || "",
         changelogType: version.changelog_type || "markdown",
-        displayName: (hasParentFile || !version.name) ? file.name : version.name,
+        displayName: (hasParentFile || !version.name) ? (hasParentFile && version.server_name ? version.server_name : file.name) : version.name,
         parentFileID: parentFileId,
+        isServerPack: version.is_server_pack,
         gameVersions: hasParentFile ? undefined : (gameVersions || []),
         releaseType: version.version_type || VersionType.RELEASE,
         relations: (hasParentFile || !version.dependencies?.length) ? undefined : { projects: version.dependencies },

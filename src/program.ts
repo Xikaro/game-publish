@@ -2,7 +2,7 @@ import { McPublishInput, McPublishOutput } from "@/action";
 import { GameVersionFilter, getGameVersionProviderByName } from "@/games";
 import { MINECRAFT } from "@/games/minecraft";
 import { LoaderMetadata, LoaderMetadataReader, createDefaultLoaderMetadataReader } from "@/loaders";
-import { PlatformType, createPlatformUploader } from "@/platforms";
+import { PlatformType, PlatformUploader, GenericPlatformUploadRequest, createPlatformUploader } from "@/platforms";
 import { GitHubContext } from "@/platforms/github";
 import { SPLIT_BY_WORDS_AND_GROUP_ACTION_PARAMETER_PATH_PARSER, createActionOutputControllerUsingMetadata, getActionOutput, getAllActionInputsAsObjectUsingMetadata, parseActionMetadataFromFile, setActionOutput } from "@/utils/actions";
 import { ENVIRONMENT } from "@/utils/environment";
@@ -62,6 +62,7 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
     const metadataReader = createDefaultLoaderMetadataReader();
     const errors = new ErrorBuilder(logger);
     const processedPlatforms = [] as PlatformType[];
+    const published = new Map<PlatformType, { uploader: PlatformUploader<GenericPlatformUploadRequest, unknown>; report: unknown }>();
 
     for (const platform of PlatformType.values()) {
         const platformOptions = { ...action.input, ...action.input[platform] };
@@ -82,9 +83,17 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
         const options = await fillInDefaultValues(platformOptions as McPublishInput[typeof platform], platform, githubContext, metadataReader);
         const uploader = createPlatformUploader(platform, { logger, githubContext });
         try {
-            action.output[platform as string] = await uploader.upload(options);
+            const report = await uploader.upload(options);
+            action.output[platform as string] = report;
             processedPlatforms.push(platform);
+            published.set(platform, { uploader, report });
         } catch (e) {
+            const platformSpecific = action.input[platform] as { rollback?: boolean } | undefined;
+            const shouldRollback = platformSpecific?.rollback ?? action.input.rollback;
+            if (shouldRollback && processedPlatforms.length > 0) {
+                logger.warn(`⚠️ Upload to ${PlatformType.friendlyNameOf(platform)} failed. Rolling back previously published releases...`);
+                await rollbackAll(published, logger);
+            }
             errors.append(e, options.failMode ?? FailMode.FAIL);
         }
     }
@@ -98,6 +107,24 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
     errors.throwIfHasErrors();
 }
 
+/**
+ * Rolls back all previously published releases across platforms.
+ *
+ * @param published - A map of platform types to the uploader and the report of a previously successful upload.
+ * @param logger - The logger to use for logging messages.
+ */
+async function rollbackAll(published: Map<PlatformType, { uploader: PlatformUploader<GenericPlatformUploadRequest, unknown>; report: unknown }>, logger: Logger): Promise<void> {
+    for (const [platform, { uploader, report }] of published) {
+        try {
+            await uploader.rollback(report);
+        } catch (e) {
+            logger.warn(`⚠️ Failed to roll back ${PlatformType.friendlyNameOf(platform)}: ${e}`);
+        }
+    }
+}
+
+/**
+ * Fills in the default values for the specified options.
 /**
  * Fills in the default values for the specified options.
  *

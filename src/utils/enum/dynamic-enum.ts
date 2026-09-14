@@ -247,32 +247,35 @@ export class DynamicEnum<T> implements ReadonlyMap<EnumKey<T>, EnumValue<T>> {
     /**
      * Returns an iterator that yields the keys of the enum.
      */
-    keys(): IterableIterator<EnumKey<T>> {
-        return this._keys[Symbol.iterator]();
+    keys(): MapIterator<EnumKey<T>> {
+        return this._keys[Symbol.iterator]() as unknown as MapIterator<EnumKey<T>>;
     }
 
     /**
      * Returns an iterator that yields the values of the enum.
      */
-    values(): IterableIterator<EnumValue<T>> {
-        return this._values[Symbol.iterator]();
+    values(): MapIterator<EnumValue<T>> {
+        return this._values[Symbol.iterator]() as unknown as MapIterator<EnumValue<T>>;
     }
 
     /**
      * Returns an iterator that yields the key/value pairs for every entry in the enum.
      */
-    *entries(): IterableIterator<EnumEntry<T>> {
+    entries(): MapIterator<EnumEntry<T>> {
         const keys = this._keys;
         const values = this._values;
-        for (let i = 0; i < keys.length; ++i) {
-            yield [keys[i], values[i]];
-        }
+        const iter = (function* (): Generator<EnumEntry<T>> {
+            for (let i = 0; i < keys.length; ++i) {
+                yield [keys[i], values[i]];
+            }
+        })();
+        return iter as unknown as MapIterator<EnumEntry<T>>;
     }
 
     /**
      * Returns an iterator that yields the key/value pairs for every entry in the enum.
      */
-    [Symbol.iterator](): IterableIterator<EnumEntry<T>> {
+    [Symbol.iterator](): MapIterator<EnumEntry<T>> {
         return this.entries();
     }
 
@@ -282,7 +285,7 @@ export class DynamicEnum<T> implements ReadonlyMap<EnumKey<T>, EnumValue<T>> {
      * @param callbackFn - The function to call for each element in the enum.
      * @param thisArg - The value to use as `this` when calling `callbackFn`.
      */
-    forEach(callbackFn: (value: EnumValue<T>, key: EnumKey<T>, e: ConstructedEnum<T>) => void, thisArg?: unknown): void {
+    forEach(callbackFn: (value: EnumValue<T>, key: EnumKey<T>, map: ReadonlyMap<EnumKey<T>, EnumValue<T>>) => void, thisArg?: unknown): void {
         callbackFn = thisArg === undefined ? callbackFn : callbackFn.bind(thisArg);
 
         const keys = this._keys;

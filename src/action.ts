@@ -54,6 +54,11 @@ export interface McPublishInput {
         token?: SecureString;
 
         /**
+         * Set to true to delete the already published versions on all platforms if publishing to any of the platforms fails. Prevents partially published releases.
+         */
+        rollback?: boolean;
+
+        /**
          * An array of globs determining which files to upload.
          */
         files?: FileInfo[];
@@ -137,6 +142,21 @@ export interface McPublishInput {
          * Your CurseForge API token.
          */
         token?: SecureString;
+
+        /**
+         * An array of globs determining which server pack files to upload to CurseForge.
+         */
+        serverFiles?: FileInfo[];
+
+        /**
+         * The display name of the server pack files.
+         */
+        serverName?: string;
+
+        /**
+         * Set to true to delete the already published versions on all platforms if publishing to any of the platforms fails. Prevents partially published releases.
+         */
+        rollback?: boolean;
 
         /**
          * An array of globs determining which files to upload.
@@ -252,6 +272,41 @@ export interface McPublishInput {
          * The name of the version.
          */
         name?: string;
+
+        /**
+         * The repository where the release will be created, formatted as 'username/repository'. Defaults to the current repository.
+         */
+        repository?: string;
+
+        /**
+         * Set to true to replace files that already exist in the release; false to skip uploading such files. Only applies when updating an existing release.
+         */
+        overwriteFiles?: boolean;
+
+        /**
+         * Specifies whether this release should be marked as the latest release. Accepts 'true', 'false', or 'legacy'. Drafts and prereleases cannot be set as latest. Only applies when creating a new release.
+         */
+        makeLatest?: string;
+
+        /**
+         * Set to true to append the changelog to the body of an existing release instead of replacing it. Only applies when updating an existing release and a changelog is provided.
+         */
+        appendBody?: boolean;
+
+        /**
+         * The tag used as the base for generating release notes. Only used when 'github-generate-changelog' is true.
+         */
+        previousTag?: string;
+
+        /**
+         * Set to true to upload files sequentially in the specified order; false (default) to upload files concurrently, which is faster.
+         */
+        preserveOrder?: boolean;
+
+        /**
+         * Set to true to delete the already published versions on all platforms if publishing to any of the platforms fails. Prevents partially published releases.
+         */
+        rollback?: boolean;
 
         /**
          * An array of globs determining which files to upload.
@@ -388,6 +443,11 @@ export interface McPublishInput {
      * Controls how the action responds to errors during the mod publishing process.
      */
     failMode?: FailMode;
+
+    /**
+     * Set to true to delete the already published versions on all platforms if publishing to any of the platforms fails. Prevents partially published releases.
+     */
+    rollback?: boolean;
 };
 
 /**

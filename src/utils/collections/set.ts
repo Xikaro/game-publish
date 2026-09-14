@@ -172,15 +172,15 @@ export class ArraySet<T> implements Set<T> {
      * This method exists because somebody thought that we need to keep
      * `Set`'s and `Map`'s APIs similar for some reason.
      */
-    keys(): IterableIterator<T> {
-        return this._values[Symbol.iterator]();
+    keys(): SetIterator<T> {
+        return this._values[Symbol.iterator]() as unknown as SetIterator<T>;
     }
 
     /**
      * Returns an iterator over the values in the set.
      */
-    values(): IterableIterator<T> {
-        return this._values[Symbol.iterator]();
+    values(): SetIterator<T> {
+        return this._values[Symbol.iterator]() as unknown as SetIterator<T>;
     }
 
     /**
@@ -192,11 +192,14 @@ export class ArraySet<T> implements Set<T> {
      * This method exists because somebody thought that we need to keep
      * `Set`'s and `Map`'s APIs similar for some reason.
      */
-    *entries(): IterableIterator<[T, T]> {
+    entries(): SetIterator<[T, T]> {
         const values = this._values;
-        for (let i = 0; i < values.length; ++i) {
-            yield [values[i], values[i]];
-        }
+        const iter = (function* (): Generator<[T, T]> {
+            for (let i = 0; i < values.length; ++i) {
+                yield [values[i], values[i]];
+            }
+        })();
+        return iter as unknown as SetIterator<[T, T]>;
     }
 
     /**
@@ -205,7 +208,7 @@ export class ArraySet<T> implements Set<T> {
      * @param callbackFn - Function to execute for each value in the set.
      * @param thisArg - Object to use as `this` when executing `callbackFn`.
      */
-    forEach(callbackFn: (value: T, theSameValueAgain: T, set: ArraySet<T>) => void, thisArg?: unknown): void {
+    forEach(callbackFn: (value: T, theSameValueAgain: T, set: Set<T>) => void, thisArg?: unknown): void {
         callbackFn = thisArg === undefined ? callbackFn : callbackFn.bind(thisArg);
         const values = this._values;
 
@@ -217,8 +220,8 @@ export class ArraySet<T> implements Set<T> {
     /**
      * Returns an iterator over the values in the set.
      */
-    [Symbol.iterator](): IterableIterator<T> {
-        return this._values[Symbol.iterator]();
+    [Symbol.iterator](): SetIterator<T> {
+        return this._values[Symbol.iterator]() as unknown as SetIterator<T>;
     }
 
     /**
@@ -227,4 +230,90 @@ export class ArraySet<T> implements Set<T> {
     get [Symbol.toStringTag](): string {
         return "Set";
     }
+
+    union<U>(other: ReadonlySetLike<U>): Set<T | U> {
+        const result = new Set<T | U>(this._values);
+        for (const v of valuesOf(other)) {
+            result.add(v);
+        }
+        return result;
+    }
+
+    intersection<U>(other: ReadonlySetLike<U>): Set<T & U> {
+        const result = new Set<T & U>();
+        for (const v of this._values) {
+            if (other.has(v as unknown as U)) {
+                result.add(v as unknown as T & U);
+            }
+        }
+        return result;
+    }
+
+    difference<U>(other: ReadonlySetLike<U>): Set<T> {
+        const result = new Set(this._values);
+        for (const v of valuesOf(other)) {
+            result.delete(v as unknown as T);
+        }
+        return result;
+    }
+
+    symmetricDifference<U>(other: ReadonlySetLike<U>): Set<T | U> {
+        const result = new Set<T | U>();
+        for (const v of this._values) {
+            if (!other.has(v as unknown as U)) {
+                result.add(v);
+            }
+        }
+        for (const v of valuesOf(other)) {
+            if (!this.has(v as unknown as T)) {
+                result.add(v);
+            }
+        }
+        return result;
+    }
+
+    isSubsetOf(other: ReadonlySetLike<unknown>): boolean {
+        for (const v of this._values) {
+            if (!other.has(v)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    isSupersetOf(other: ReadonlySetLike<unknown>): boolean {
+        for (const v of valuesOf(other)) {
+            if (!this.has(v as unknown as T)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    isDisjointFrom(other: ReadonlySetLike<unknown>): boolean {
+        for (const v of this._values) {
+            if (other.has(v)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+/**
+ * Collects the values of a {@link ReadonlySetLike} into an array.
+ *
+ * @param setLike - The set-like object to iterate over.
+ *
+ * @returns An array of the values contained in the set-like object.
+ */
+function valuesOf<T>(setLike: ReadonlySetLike<T>): T[] {
+    const values: T[] = [];
+    const iterator = setLike.keys();
+    let step = iterator.next();
+    while (!step.done) {
+        values.push(step.value);
+        step = iterator.next();
+    }
+    return values;
 }

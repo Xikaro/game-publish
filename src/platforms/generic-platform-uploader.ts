@@ -184,6 +184,14 @@ export abstract class GenericPlatformUploader<TOptions extends GenericPlatformUp
     }
 
     /**
+     * @inheritdoc
+     */
+    rollback(_report: TReport): Promise<void> {
+        this._logger.debug(`Rollback is not supported for ${PlatformType.friendlyNameOf(this.platform)}.`);
+        return Promise.resolve();
+    }
+
+    /**
      * Processes the specified upload request.
      *
      * @param request - The request to process.
