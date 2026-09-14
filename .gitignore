@@ -149,3 +149,4 @@ paket-files/
 .cr/
 __pycache__/
 *.pyc
+.ncc-out/

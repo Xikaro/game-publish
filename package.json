@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf dist",
-    "generate": "ncc run scripts/generate.ts -t",
-    "strip": "ncc run scripts/strip.ts -t",
+    "generate": "ncc build scripts/generate.ts -o .ncc-out/generate && node .ncc-out/generate/index.js",
+    "strip": "ncc build scripts/strip.ts -o .ncc-out/strip && node .ncc-out/strip/index.js",
     "prebuild": "npm run clean && npm run generate",
     "build": "ncc build -m -s --license license.txt",
     "postbuild": "npm run strip",
@@ -46,7 +46,6 @@
     "@vercel/ncc": "^0.45.0",
     "babel-jest": "^29.7.0",
     "eslint": "^8.57.1",
-    "jest": "^29.7.0",
     "mock-fs": "^5.5.0",
     "ts-jest": "^29.4.12",
     "typescript": "^5.9.3",
