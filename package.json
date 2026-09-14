@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf dist",
-    "generate": "ncc build scripts/generate.ts -o .ncc-out/generate && node .ncc-out/generate/index.js",
-    "strip": "ncc build scripts/strip.ts -o .ncc-out/strip && node .ncc-out/strip/index.js",
+    "generate": "ncc build scripts/generate.ts --out .ncc-out/generate && node .ncc-out/generate/index.js",
+    "strip": "ncc build scripts/strip.ts --out .ncc-out/strip && node .ncc-out/strip/index.js",
     "prebuild": "npm run clean && npm run generate",
     "build": "ncc build -m -s --license license.txt",
     "postbuild": "npm run strip",
