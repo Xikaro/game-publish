@@ -171,26 +171,27 @@ export class CurseForgeUploader extends GenericPlatformUploader<CurseForgeUpload
     async rollback(report: CurseForgeUploadReport): Promise<void> {
         const token = this._token;
         if (!token) {
-            this._logger.debug("Cannot roll back CurseForge version: no token available.");
+            this._logger.debug("Cannot roll back CurseForge upload: no token available.");
             return;
         }
 
-        if (!report?.version) {
-            this._logger.warn("⚠️ Cannot roll back CurseForge version: insufficient report data.");
+        if (!report?.id || !report?.files?.length) {
+            this._logger.warn("⚠️ Cannot roll back CurseForge upload: insufficient report data.");
             return;
         }
 
-        try {
-            const api = new CurseForgeUploadApiClient({ token: token.unwrap(), fetch: this._fetch });
-            // Delete the main version file
-            const deleted = await api.deleteFile(report.id, report.version);
-            if (deleted) {
-                this._logger.info(`🗑️ Rolled back CurseForge version '${report.version}'`);
-            } else {
-                this._logger.warn(`⚠️ Could not delete CurseForge version '${report.version}' (it may not exist anymore)`);
+        const api = new CurseForgeUploadApiClient({ token: token.unwrap(), fetch: this._fetch });
+        for (const file of report.files) {
+            try {
+                const deleted = await api.deleteFile(report.id, file.id as number);
+                if (deleted) {
+                    this._logger.info(`🗑️ Rolled back CurseForge file '${file.name}'`);
+                } else {
+                    this._logger.warn(`⚠️ Could not delete CurseForge file '${file.name}' (it may not exist anymore)`);
+                }
+            } catch (e) {
+                this._logger.warn(`⚠️ Failed to roll back CurseForge file '${file.name}': ${e}`);
             }
-        } catch (e) {
-            this._logger.warn(`⚠️ Failed to roll back CurseForge version '${report.version}': ${e}`);
         }
     }
 }

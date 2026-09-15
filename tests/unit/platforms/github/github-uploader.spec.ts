@@ -10,12 +10,30 @@ import { GitHubReleaseInit } from "@/platforms/github/github-release";
 import { GITHUB_API_URL } from "@/platforms/github/github-api-client";
 import { GitHubUploader } from "@/platforms/github/github-uploader";
 
+let UPLOADED = false;
+
 const GITHUB_FETCH = createFakeFetch({
     baseUrl: GITHUB_API_URL,
     requiredHeaders: ["Authorization"],
 
     GET: {
-        "^\\/repos\\/owner\\/repo\\/releases\\/tags\\/v1\\.0\\.0$": () => HttpResponse.json({}, { status: 404 }),
+        "^\\/repos\\/owner\\/repo\\/releases\\/tags\\/v1\\.0\\.0$": () => {
+            if (!UPLOADED) {
+                return HttpResponse.json({}, { status: 404 });
+            }
+
+            return {
+                id: 1,
+                tag_name: "v1.0.0",
+                html_url: "https://github.com/owner/repo/releases/tag/v1.0.0",
+                upload_url: "https://uploads.github.com/repos/owner/repo/releases/1/assets",
+                assets: [{
+                    id: 42,
+                    name: "file.txt",
+                    browser_download_url: "https://github.com/owner/repo/releases/download/v1.0.0/file.txt",
+                }],
+            };
+        },
 
         "^\\/repos\\/owner\\/repo\\/releases\\/1$": () => ({
             id: 1,
@@ -43,6 +61,7 @@ const GITHUB_FETCH = createFakeFetch({
             expect(init.discussion_category_name).toBe("Discussion");
             expect(init.generate_release_notes).toBe(true);
 
+            UPLOADED = true;
             return { id: 1, ...init };
         },
 
@@ -55,6 +74,8 @@ const GITHUB_FETCH = createFakeFetch({
 
     DELETE: {
         "^\\/repos\\/owner\\/repo\\/releases\\/assets\\/42$": () => HttpResponse.json({}, { status: 204 }),
+
+        "^\\/repos\\/owner\\/repo\\/releases\\/1$": () => HttpResponse.json({}, { status: 204 }),
     },
 });
 
@@ -63,6 +84,7 @@ const CONTEXT = new GitHubContext({
 });
 
 beforeEach(() => {
+    UPLOADED = false;
     mockFs({
         "file.txt": "",
     });
@@ -108,6 +130,33 @@ describe("GitHubUploader", () => {
                     url: "https://github.com/owner/repo/releases/download/v1.0.0/file.txt",
                 }],
             });
+        });
+    });
+
+    describe("rollback", () => {
+        test("deletes the release reported by a previous upload", async () => {
+            const uploader = new GitHubUploader({ githubContext: CONTEXT, fetch: GITHUB_FETCH });
+
+            const report = await uploader.upload({
+                token: SecureString.from("token"),
+                name: "Version v1.0.0",
+                version: "v1.0.0",
+                versionType: VersionType.ALPHA,
+                commitish: "master",
+                changelog: "Changelog",
+                discussion: "Discussion",
+                draft: true,
+                generateChangelog: true,
+                files: [FileInfo.of("file.txt")],
+            });
+
+            await expect(uploader.rollback(report)).resolves.toBeUndefined();
+        });
+
+        test("does not throw if no release has been uploaded yet", async () => {
+            const uploader = new GitHubUploader({ githubContext: CONTEXT, fetch: GITHUB_FETCH });
+
+            await expect(uploader.rollback({ repo: "owner/repo", tag: "v1.0.0", url: "https://github.com/owner/repo/releases/tag/v1.0.0", files: [] })).resolves.toBeUndefined();
         });
     });
 });

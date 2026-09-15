@@ -64,9 +64,9 @@ describe("QuiltMetadata", () => {
         });
 
         test("returns the same value as the 'environment' field", () => {
-            expect(QuiltMetadata.from({ "minecraft": { environment: "client" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
-            expect(QuiltMetadata.from({ "minecraft": { environment: "dedicated_server" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
-            expect(QuiltMetadata.from({ "minecraft": { environment: "*" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.ALL);
+            expect(QuiltMetadata.from({ minecraft: { environment: "client" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.CLIENT);
+            expect(QuiltMetadata.from({ minecraft: { environment: "dedicated_server" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.SERVER);
+            expect(QuiltMetadata.from({ minecraft: { environment: "*" } } as RawQuiltMetadata).environment).toBe(LoaderEnvironmentType.ALL);
         });
 
         test("returns the same value as the 'environment' field in the custom payload", () => {

@@ -195,8 +195,15 @@ export class CurseForgeUploadApiClient {
      * @returns `true` if the file was deleted successfully, `false` otherwise.
      */
     async deleteFile(projectId: number, fileId: number): Promise<boolean> {
-        const response = await this._fetch(`/projects/${projectId}/files/${fileId}`, HttpRequest.delete());
-        return response.ok;
+        try {
+            const response = await this._fetch(`/projects/${projectId}/files/${fileId}`, HttpRequest.delete());
+            return response.ok;
+        } catch (e) {
+            if (isHttpError(e)) {
+                return false;
+            }
+            throw e;
+        }
     }
 
     /**

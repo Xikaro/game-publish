@@ -79,6 +79,12 @@ const MODRINTH_FETCH = createFakeFetch({
             };
         },
     },
+
+    DELETE: {
+        "^\\/version\\/([\\w-]+)": ([id]) => {
+            return id === "BBBBBBBB" ? HttpResponse.text("Success", { status: 200 }) : HttpResponse.text("Not found", { status: 404 });
+        },
+    },
 });
 
 beforeEach(() => {
@@ -130,6 +136,36 @@ describe("ModrinthUploader", () => {
                     url: "https://cdn.modrinth.com/data/AAAAAAAA/versions/BBBBBBBB/file.txt",
                 }],
             });
+        });
+    });
+
+    describe("rollback", () => {
+        test("deletes the version reported by a previous upload", async () => {
+            const uploader = new ModrinthUploader({ fetch: MODRINTH_FETCH });
+
+            const report = await uploader.upload({
+                token: SecureString.from("token"),
+                id: "foo",
+                name: "Version v1.0.0",
+                version: "1.0.0",
+                versionType: VersionType.ALPHA,
+                changelog: "Changelog",
+                files: [FileInfo.of("file.txt")],
+                dependencies: [parseDependency("fabric-api@0.75.0(required)")],
+                gameVersions: ["1.18.2"],
+                loaders: ["fabric", "unknown"],
+                environment: LoaderEnvironmentType.ALL,
+                java: [JavaVersion.of(17)],
+                unfeatureMode: ModrinthUnfeatureMode.ANY,
+            });
+
+            await expect(uploader.rollback(report)).resolves.toBeUndefined();
+        });
+
+        test("does not throw if no version has been uploaded yet", async () => {
+            const uploader = new ModrinthUploader({ fetch: MODRINTH_FETCH });
+
+            await expect(uploader.rollback({ id: "AAAAAAAA", version: "BBBBBBBB", url: "https://example.com", files: [] })).resolves.toBeUndefined();
         });
     });
 });

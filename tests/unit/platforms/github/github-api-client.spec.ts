@@ -129,6 +129,13 @@ const GITHUB_FETCH = createFakeFetch({
 
             return asset ? HttpResponse.text("Success", { status: 204 }) : HttpResponse.text("Not found", { status: 404 });
         },
+
+        "^\\/repos\\/([\\w-]+)\\/([\\w-]+)\\/releases\\/([\\d-]+)": ([owner, repo, id]) => {
+            const repoPath = `/${owner}/${repo}/`;
+            const release = DB.releases.find(x => x.id === +id && x.url.includes(repoPath));
+
+            return release ? HttpResponse.text("Success", { status: 204 }) : HttpResponse.text("Not found", { status: 404 });
+        },
     },
 });
 
@@ -258,6 +265,41 @@ describe("GitHubApiClient", () => {
             const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
 
             const success = await api.deleteReleaseAsset({ owner: "Xikaro", repo: "packed-inventory", id: -42 });
+
+            expect(success).toBe(false);
+        });
+    });
+
+    describe("deleteRelease", () => {
+        test("returns true if the specified release was successfully deleted", async () => {
+            const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
+
+            const success = await api.deleteRelease({ owner: "Xikaro", repo: "packed-inventory", id: 135474639 });
+
+            expect(success).toBe(true);
+        });
+
+        test("returns false if the specified release doesn't exist", async () => {
+            const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
+
+            const success = await api.deleteRelease({ owner: "Xikaro", repo: "packed-inventory", id: -42 });
+
+            expect(success).toBe(false);
+        });
+
+        test("deletes a release by its tag name", async () => {
+            const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
+            const expectedRelease = DB.releases.find(x => x.id === 135474639);
+
+            const success = await api.deleteRelease({ owner: "Xikaro", repo: "packed-inventory", tag_name: expectedRelease.tag_name });
+
+            expect(success).toBe(true);
+        });
+
+        test("returns false if no release is found by its tag name", async () => {
+            const api = new GitHubApiClient({ fetch: GITHUB_FETCH, token: "token" });
+
+            const success = await api.deleteRelease({ owner: "Xikaro", repo: "packed-inventory", tag_name: "unknown-tag" });
 
             expect(success).toBe(false);
         });

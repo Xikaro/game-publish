@@ -162,6 +162,14 @@ const CURSEFORGE_FETCH = createFakeFetch({
             return HttpResponse.json(uploadedFile, { status: 200 });
         },
     },
+
+    DELETE: {
+        "^\\/projects\\/(\\d+)\\/files\\/([\\d-]+)": ([projectId, fileId]) => {
+            const file = DB.files.find(x => x.id === +fileId && x.project_id === +projectId);
+
+            return file ? HttpResponse.text("Success", { status: 200 }) : HttpResponse.json({ errorCode: 404, errorMessage: `File not found: '${fileId}'` }, { status: 404 });
+        },
+    },
 });
 
 let UPLOADED_METADATA = [] as CurseForgeVersionInitMetadata[];
@@ -464,6 +472,32 @@ describe("CurseForgeUploadApiClient", () => {
                 name,
                 files: DB.files.filter(x => x.project_id === projectId).slice(0, fileCount),
             });
+        });
+    });
+
+    describe("deleteFile", () => {
+        test("returns true if the specified file was successfully deleted", async () => {
+            const api = new CurseForgeUploadApiClient({ fetch: CURSEFORGE_FETCH, token: "token" });
+
+            const success = await api.deleteFile(1, 1);
+
+            expect(success).toBe(true);
+        });
+
+        test("returns false if the specified file doesn't exist", async () => {
+            const api = new CurseForgeUploadApiClient({ fetch: CURSEFORGE_FETCH, token: "token" });
+
+            const success = await api.deleteFile(1, -42);
+
+            expect(success).toBe(false);
+        });
+
+        test("returns false if the specified file belongs to a different project", async () => {
+            const api = new CurseForgeUploadApiClient({ fetch: CURSEFORGE_FETCH, token: "token" });
+
+            const success = await api.deleteFile(1, 4);
+
+            expect(success).toBe(false);
         });
     });
 });

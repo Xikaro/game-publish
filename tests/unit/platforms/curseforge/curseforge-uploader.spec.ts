@@ -6,6 +6,7 @@ import { PlatformType } from "@/platforms/platform-type";
 import { SecureString } from "@/utils/security/secure-string";
 import { FileInfo } from "@/utils/io/file-info";
 import { FormData } from "@/utils/net/form-data";
+import { HttpResponse } from "@/utils/net/http-response";
 import { VersionType } from "@/utils/versioning/version-type";
 import { JavaVersion } from "@/utils/java/java-version";
 import { parseDependency } from "@/dependencies/dependency";
@@ -88,6 +89,14 @@ const CURSEFORGE_UPLOAD_FETCH = createFakeFetch({
             };
         },
     },
+
+    DELETE: {
+        "^\\/projects\\/(\\d+)\\/files\\/([\\d-]+)": ([_projectId, fileId]) => {
+            const matchesUploadedFile = +fileId === 42;
+
+            return matchesUploadedFile ? HttpResponse.text("Success", { status: 200 }) : HttpResponse.json({ errorCode: 404, errorMessage: `File not found: '${fileId}'` }, { status: 404 });
+        },
+    },
 });
 
 const CURSEFORGE_FETCH = createCombinedFetch(
@@ -142,6 +151,34 @@ describe("CurseForgeUploader", () => {
                     url: "https://www.curseforge.com/api/v1/mods/1/files/42/download",
                 }],
             });
+        });
+    });
+
+    describe("rollback", () => {
+        test("deletes the files reported by a previous upload", async () => {
+            const uploader = new CurseForgeUploader({ fetch: CURSEFORGE_FETCH });
+
+            const report = await uploader.upload({
+                token: SecureString.from("token"),
+                id: "foo",
+                name: "Version v1.0.0",
+                version: "1.0.0",
+                versionType: VersionType.ALPHA,
+                changelog: "Changelog",
+                files: [FileInfo.of("file.txt")],
+                dependencies: [parseDependency("fabric@0.75.0(required){curseforge:306612}")],
+                gameVersions: ["1.18.2"],
+                loaders: ["fabric", "unknown"],
+                java: [JavaVersion.of(17)],
+            });
+
+            await expect(uploader.rollback(report)).resolves.toBeUndefined();
+        });
+
+        test("does not throw if no files have been uploaded yet", async () => {
+            const uploader = new CurseForgeUploader({ fetch: CURSEFORGE_FETCH });
+
+            await expect(uploader.rollback({ id: 1, version: 42, url: "https://example.com", files: [] })).resolves.toBeUndefined();
         });
     });
 });

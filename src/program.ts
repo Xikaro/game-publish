@@ -125,8 +125,6 @@ async function rollbackAll(published: Map<PlatformType, { uploader: PlatformUplo
 
 /**
  * Fills in the default values for the specified options.
-/**
- * Fills in the default values for the specified options.
  *
  * @param options - The options to fill in the default values for.
  * @param platform - The target platform.

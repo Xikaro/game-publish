@@ -95,6 +95,7 @@ jobs:
           retry-attempts: 2
           retry-delay: 10000
           fail-mode: fail
+          rollback: true
 ```
 
 ### 📝 Inputs
@@ -135,6 +136,7 @@ jobs:
 | [retry-attempts](#retry-attempts) | Defines the maximum number of asset publishing attempts. | `2` | `2` <br> `10` <br> `-1` |
 | [retry-delay](#retry-delay) | Specifies the delay (in milliseconds) between asset publishing attempts. | `10000` | `1000` <br> `60000` <br> `0` |
 | [fail-mode](#fail-mode) | Controls how the action responds to errors during the mod publishing process. | `fail` | `fail` <br> `warn` <br> `skip` |
+| [rollback](#rollback) | When set to `true`, releases published to platforms that succeeded are deleted if publishing to another platform fails. | `true` | `true` <br> `false` |
 
 Please note that any top-level property *(`name`, `version`, `files`, etc.)* can also be used with a platform-specific prefix *(`modrinth-name`, `curseforge-version`, `github-files`, etc.)*. For example:
 
@@ -733,6 +735,23 @@ Available values:
  - `fail` - immediately sets the action status to **failed** and terminates its execution.
  - `warn` - warns about errors. The action won't be terminated, nor its status will be set to **failed**.
  - `skip` - warns about errors. The action won't be terminated, but its status will be set to **failed** after all specified targets have been processed.
+
+#### rollback
+
+When set to `true`, releases already published to platforms that succeeded are deleted (rolled back) if publishing to another platform fails. Default value is:
+
+```yaml
+rollback: true
+```
+
+This input can also be set per platform, for example:
+
+```yaml
+rollback: true
+modrinth-rollback: false
+```
+
+In the example above, publishing is rolled back on CurseForge and GitHub (which fall back to the shared value), but not on Modrinth.
 
 ### 📤 Outputs
 
