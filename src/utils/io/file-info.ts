@@ -147,6 +147,37 @@ export class FileInfo {
 }
 
 /**
+ * The glob patterns that produced each resolved file list.
+ */
+const FILE_PATTERNS = new WeakMap<FileInfo[], readonly string[]>();
+
+/**
+ * Associates the given file list with the glob patterns that produced it.
+ *
+ * @param files - The resolved file list.
+ * @param patterns - The glob patterns used to resolve the files.
+ *
+ * @returns The resolved file list.
+ */
+function registerFilePatterns<T extends FileInfo[]>(files: T, patterns: readonly string[]): T {
+    FILE_PATTERNS.set(files, patterns);
+    return files;
+}
+
+/**
+ * Gets the glob patterns that produced the given file list.
+ *
+ * Returns an empty array if the file list was not produced by {@link findFiles} or {@link findFilesSync}.
+ *
+ * @param files - The resolved file list.
+ *
+ * @returns The glob patterns that produced the file list.
+ */
+export function getFilePatterns(files: FileInfo[]): string[] {
+    return [...(FILE_PATTERNS.get(files) ?? [])];
+}
+
+/**
  * Compares two {@link FileInfo} objects or file paths for equality.
  *
  * @param left - {@link FileInfo} object or file path.
@@ -171,7 +202,8 @@ export function fileEquals(left: FileInfo | string, right: FileInfo | string): b
 export async function findFiles(pattern: string | string[]): Promise<FileInfo[]> {
     const patterns = Array.isArray(pattern) ? pattern : [pattern];
     const files = await Promise.all(patterns.map(x => glob(x)));
-    return $i(files).flatMap(x => x).distinct().map(x => new FileInfo(x)).toArray();
+    const result = $i(files).flatMap(x => x).distinct().map(x => new FileInfo(x)).toArray();
+    return registerFilePatterns(result, patterns);
 }
 
 /**
@@ -184,7 +216,8 @@ export async function findFiles(pattern: string | string[]): Promise<FileInfo[]>
 export function findFilesSync(pattern: string | string[]): FileInfo[] {
     const patterns = Array.isArray(pattern) ? pattern : [pattern];
     const files = patterns.map(x => glob.sync(x));
-    return $i(files).flatMap(x => x).distinct().map(x => new FileInfo(x)).toArray();
+    const result = $i(files).flatMap(x => x).distinct().map(x => new FileInfo(x)).toArray();
+    return registerFilePatterns(result, patterns);
 }
 
 /**

@@ -6,6 +6,7 @@ import {
     fileEquals,
     findFiles,
     findFilesSync,
+    getFilePatterns,
     readAllText,
     readAllTextSync,
     readAllZippedText,
@@ -212,6 +213,36 @@ describe("findFiles", () => {
             const files = await findFiles(variant);
             expect(files.map(x => x.path)).toEqual(variant);
         }
+    });
+});
+
+describe("getFilePatterns", () => {
+    test("returns the patterns for files resolved by findFiles", async () => {
+        const files = await findFiles("path/to/test.*");
+        expect(getFilePatterns(files)).toEqual(["path/to/test.*"]);
+    });
+
+    test("returns the multiple patterns for files resolved by findFiles", async () => {
+        const patterns = ["path/to/test.json", "path/to/test.txt"];
+        const files = await findFiles(patterns);
+        expect(files.map(x => x.path)).toEqual(patterns);
+        expect(getFilePatterns(files)).toEqual(patterns);
+    });
+
+    test("returns the patterns even when no files matched", async () => {
+        const files = await findFiles("path/from/nonexistent.*");
+        expect(files).toEqual([]);
+        expect(getFilePatterns(files)).toEqual(["path/from/nonexistent.*"]);
+    });
+
+    test("returns the patterns for files resolved by findFilesSync", () => {
+        const files = findFilesSync(["path/to/test.*"]);
+        expect(getFilePatterns(files)).toEqual(["path/to/test.*"]);
+    });
+
+    test("returns an empty array for file lists not produced by findFiles", () => {
+        expect(getFilePatterns([FileInfo.of("path/to/test.txt")])).toEqual([]);
+        expect(getFilePatterns([])).toEqual([]);
     });
 });
 

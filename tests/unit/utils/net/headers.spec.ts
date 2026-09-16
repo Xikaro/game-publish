@@ -576,10 +576,15 @@ describe("inferHttpRequestBodyHeaders", () => {
 
     test("returns correct headers when body is a ReadableStream created from a file path", () => {
         const body = createReadStream("file.json");
+        body.on("error", () => undefined);
 
-        const headers = inferHttpRequestBodyHeaders(body);
+        try {
+            const headers = inferHttpRequestBodyHeaders(body);
 
-        expect(headers["Content-Type"]).toBe("application/octet-stream");
-        expect(headers["Content-Length"]).toBe(String(statSync("file.json").size));
+            expect(headers["Content-Type"]).toBe("application/octet-stream");
+            expect(headers["Content-Length"]).toBe(String(statSync("file.json").size));
+        } finally {
+            body.destroy();
+        }
     });
 });

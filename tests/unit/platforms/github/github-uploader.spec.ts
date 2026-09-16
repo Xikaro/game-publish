@@ -11,6 +11,7 @@ import { GITHUB_API_URL } from "@/platforms/github/github-api-client";
 import { GitHubUploader } from "@/platforms/github/github-uploader";
 
 let UPLOADED = false;
+let TAG_DELETED = false;
 
 const GITHUB_FETCH = createFakeFetch({
     baseUrl: GITHUB_API_URL,
@@ -76,6 +77,11 @@ const GITHUB_FETCH = createFakeFetch({
         "^\\/repos\\/owner\\/repo\\/releases\\/assets\\/42$": () => HttpResponse.json({}, { status: 204 }),
 
         "^\\/repos\\/owner\\/repo\\/releases\\/1$": () => HttpResponse.json({}, { status: 204 }),
+
+        "^\\/repos\\/owner\\/repo\\/git\\/refs\\/tags\\/v1\\.0\\.0$": () => {
+            TAG_DELETED = true;
+            return HttpResponse.json({}, { status: 204 });
+        },
     },
 });
 
@@ -85,6 +91,7 @@ const CONTEXT = new GitHubContext({
 
 beforeEach(() => {
     UPLOADED = false;
+    TAG_DELETED = false;
     mockFs({
         "file.txt": "",
     });
@@ -151,12 +158,70 @@ describe("GitHubUploader", () => {
             });
 
             await expect(uploader.rollback(report)).resolves.toBeUndefined();
+            expect(TAG_DELETED).toBe(true);
         });
 
         test("does not throw if no release has been uploaded yet", async () => {
             const uploader = new GitHubUploader({ githubContext: CONTEXT, fetch: GITHUB_FETCH });
 
             await expect(uploader.rollback({ repo: "owner/repo", tag: "v1.0.0", url: "https://github.com/owner/repo/releases/tag/v1.0.0", files: [] })).resolves.toBeUndefined();
+        });
+
+        test("does not delete a release that existed before the upload", async () => {
+            let deleteCalled = false;
+            const fetch = createFakeFetch({
+                baseUrl: GITHUB_API_URL,
+                requiredHeaders: ["Authorization"],
+                GET: {
+                    "^\\/repos\\/owner\\/repo\\/releases\\/tags\\/v1\\.0\\.0$": () => ({
+                        id: 1,
+                        tag_name: "v1.0.0",
+                        html_url: "https://github.com/owner/repo/releases/tag/v1.0.0",
+                        upload_url: "https://uploads.github.com/repos/owner/repo/releases/1/assets",
+                        assets: [],
+                    }),
+                    "^\\/repos\\/owner\\/repo\\/releases\\/1$": () => ({
+                        id: 1,
+                        tag_name: "v1.0.0",
+                        html_url: "https://github.com/owner/repo/releases/tag/v1.0.0",
+                        upload_url: "https://uploads.github.com/repos/owner/repo/releases/1/assets",
+                        assets: [],
+                    }),
+                },
+                PATCH: {
+                    "^\\/repos\\/owner\\/repo\\/releases\\/1$": () => ({
+                        id: 1,
+                        tag_name: "v1.0.0",
+                        html_url: "https://github.com/owner/repo/releases/tag/v1.0.0",
+                        upload_url: "https://uploads.github.com/repos/owner/repo/releases/1/assets",
+                        assets: [],
+                    }),
+                },
+                POST: {
+                    "^https:\\/\\/uploads\\.github\\.com\\/repos\\/owner\\/repo\\/releases\\/1\\/assets\\?name=file\\.txt$": () => ({
+                        id: 42,
+                        name: "file.txt",
+                        browser_download_url: "https://github.com/owner/repo/releases/download/v1.0.0/file.txt",
+                    }),
+                },
+                DELETE: {
+                    "^\\/repos\\/owner\\/repo\\/releases\\/1$": () => {
+                        deleteCalled = true;
+                        return HttpResponse.json({}, { status: 204 });
+                    },
+                    "^\\/repos\\/owner\\/repo\\/releases\\/assets\\/\\d+$": () => HttpResponse.json({}, { status: 204 }),
+                },
+            });
+
+            const uploader = new GitHubUploader({ githubContext: CONTEXT, fetch });
+            const report = await uploader.upload({
+                token: SecureString.from("token"),
+                version: "v1.0.0",
+                files: [FileInfo.of("file.txt")],
+            });
+
+            await uploader.rollback(report);
+            expect(deleteCalled).toBe(false);
         });
     });
 });

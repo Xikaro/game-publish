@@ -49,6 +49,13 @@ export class GitHubUploader extends GenericPlatformUploader<GitHubUploaderOption
     private _token?: SecureString;
 
     /**
+     * Whether the release was created by the last upload.
+     *
+     * Used to avoid rolling back releases that existed before this action ran.
+     */
+    private _createdRelease = false;
+
+    /**
      * Constructs a new {@link GitHubUploader} instance.
      *
      * @param options - The options to use for the uploader.
@@ -93,6 +100,11 @@ export class GitHubUploader extends GenericPlatformUploader<GitHubUploaderOption
             return;
         }
 
+        if (!this._createdRelease) {
+            this._logger.debug("Cannot roll back GitHub release: the release was not created by this action.");
+            return;
+        }
+
         if (!report?.repo || !report?.tag) {
             this._logger.warn("⚠️ Cannot roll back GitHub release: insufficient report data.");
             return;
@@ -104,6 +116,13 @@ export class GitHubUploader extends GenericPlatformUploader<GitHubUploaderOption
             const deleted = await api.deleteRelease({ owner, repo, tag_name: report.tag });
             if (deleted) {
                 this._logger.info(`🗑️ Rolled back GitHub release '${report.tag}' from ${report.repo}`);
+
+                const tagDeleted = await api.deleteTag({ owner, repo, tag_name: report.tag });
+                if (tagDeleted) {
+                    this._logger.info(`🗑️ Rolled back GitHub tag '${report.tag}'`);
+                } else {
+                    this._logger.warn(`⚠️ Could not delete GitHub tag '${report.tag}'`);
+                }
             } else {
                 this._logger.warn(`⚠️ Could not delete GitHub release '${report.tag}' (it may not exist anymore)`);
             }
@@ -206,6 +225,7 @@ export class GitHubUploader extends GenericPlatformUploader<GitHubUploaderOption
      */
     private async updateOrCreateRelease(request: GitHubUploadRequest, api: GitHubApiClient, repo: GitHubRepositoryIdentifier): Promise<GitHubRelease> {
         const [id, created] = await this.getOrCreateReleaseId(request, api, repo);
+        this._createdRelease = created;
 
         const patch = { ...repo, id } as GitHubReleasePatch;
 

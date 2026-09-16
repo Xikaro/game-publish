@@ -268,4 +268,22 @@ export class GitHubApiClient {
         const response = await this._fetch(`/repos/${owner}/${repo}/releases/assets/${id}`, HttpRequest.delete());
         return response.ok;
     }
+
+    /**
+     * Deletes the specified Git tag.
+     *
+     * @param tag - The identifier of the tag to delete.
+     *
+     * @returns `true` if the tag was deleted successfully, `false` otherwise.
+     */
+    async deleteTag(tag: GitHubReleaseIdentifier): Promise<boolean> {
+        const { owner, repo, tag_name } = tag;
+        if (!tag_name) {
+            return false;
+        }
+
+        const name = tag_name.startsWith("refs/tags/") ? tag_name.substring("refs/tags/".length) : tag_name;
+        const response = await this._fetch(`/repos/${owner}/${repo}/git/refs/tags/${name}`, HttpRequest.delete());
+        return response.ok;
+    }
 }

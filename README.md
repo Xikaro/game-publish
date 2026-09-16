@@ -1,9 +1,9 @@
-## mc-publish
+## game-publish
 
 [![Version](https://img.shields.io/github/v/release/Xikaro/game-publish?sort=date&label=version)](https://github.com/Xikaro/game-publish/releases/latest)
 [![License](https://img.shields.io/github/license/Xikaro/game-publish?cacheSeconds=36000)](https://github.com/Xikaro/game-publish/blob/HEAD/LICENSE.md)
 
-`mc-publish` provides a unified interface for publishing mods, plugins, resource packs, and other project types to popular platforms such as Modrinth, GitHub Releases, and CurseForge. Designed with a zero-config approach in mind, it automatically resolves common values and minimizes boilerplate, while still offering lots of configuration options for more advanced users.
+`game-publish` provides a unified interface for publishing mods, plugins, resource packs, and other project types to popular platforms such as Modrinth, GitHub Releases, and CurseForge. Designed with a zero-config approach in mind, it automatically resolves common values and minimizes boilerplate, while still offering lots of configuration options for more advanced users.
 
 ### 📖 Usage
 
@@ -52,6 +52,8 @@ jobs:
 
           curseforge-id: 394468
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          curseforge-server-files: release/*-server.zip
+          curseforge-server-name: Server Pack v1.0.0
 
           github-tag: mc1.17.1-0.3.2
           github-generate-changelog: true
@@ -59,6 +61,12 @@ jobs:
           github-prerelease: false
           github-commitish: dev
           github-discussion: Announcements
+          github-repository: CaffeineMC/sodium-fabric
+          github-overwrite-files: true
+          github-make-latest: legacy
+          github-append-body: false
+          github-previous-tag: mc1.17.1-0.3.1
+          github-preserve-order: false
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
           files: |
@@ -104,10 +112,12 @@ jobs:
 |------|-------------|---------|----------|
 | [modrinth-id](#modrinth-id) | The unique identifier of your Modrinth project. | A value specified in the metadata file. | `AANobbMI` |
 | [modrinth-token](#modrinth-token) | Your Modrinth API token. | - | `${{ secrets.MODRINTH_TOKEN }}` |
+| [modrinth-rollback](#modrinth-rollback) | Override the global `rollback` setting for Modrinth. | The value of the global `rollback` input. | `true` <br> `false` |
 | [curseforge-id](#curseforge-id) | The unique identifier of your CurseForge project. | A value specified in the metadata file. | `394468` |
 | [curseforge-token](#curseforge-token) | Your CurseForge API token. | - | `${{ secrets.CURSEFORGE_TOKEN }}` |
 | [curseforge-server-files](#curseforge-server-files) | An array of [globs](https://www.digitalocean.com/community/tools/glob) determining which server pack files to upload to CurseForge. | - | `release/*-server.zip` |
 | [curseforge-server-name](#curseforge-server-name) | The display name of the server pack files. | The name of the server pack file. | `Server Pack v1.0.0` |
+| [curseforge-rollback](#curseforge-rollback) | Override the global `rollback` setting for CurseForge. | The value of the global `rollback` input. | `true` <br> `false` |
 | [github-tag](#github-tag) | The tag name for the release where assets will be uploaded. | If a release triggered the action, its tag is used. Otherwise, inferred from `GITHUB_REF`. | `mc1.17.1-0.3.2` |
 | [github-generate-changelog](#github-generate-changelog) | Set to `true` to generate a changelog automatically for this release. Ignored if the GitHub Release already exists. | `true`, if `changelog` and `changelog-file` are not provided; otherwise, `false`. | `true` <br> `false` |
 | [github-draft](#github-draft) | Set to `true` to create a draft release. Ignored if the GitHub Release already exists. | `false` | `true` <br> `false` |
@@ -115,6 +125,7 @@ jobs:
 | [github-commitish](#github-commitish) | Defines the commitish value that determines where the Git tag is created from. Ignored if the Git tag already exists. | The repository's default branch. | `dev` <br> `feature/86` |
 | [github-discussion](#github-discussion) | If specified, creates and links a discussion of the specified **EXISTING** category to the release. Ignored if the GitHub Release already exists. | - | `Announcements` |
 | [github-token](#github-token) | Your GitHub API token. | - | `${{ secrets.GITHUB_TOKEN }}` |
+| [github-rollback](#github-rollback) | Override the global `rollback` setting for GitHub. | The value of the global `rollback` input. | `true` <br> `false` |
 | [github-repository](#github-repository) | The repository where the release will be created, formatted as `username/repository`. | The current repository. | `CaffeineMC/sodium-fabric` |
 | [github-overwrite-files](#github-overwrite-files) | Set to `true` to replace files that already exist in the release; `false` to skip uploading such files. Only applies when updating an existing release. | `true` | `true` <br> `false` |
 | [github-make-latest](#github-make-latest) | Specifies whether this release should be marked as the latest release. Only applies when creating a new release. | GitHub defaults for newly published releases. | `true` <br> `false` <br> `legacy` |
@@ -402,7 +413,7 @@ An array of [globs](https://www.digitalocean.com/community/tools/glob) determini
 ```yaml
 files: |
   build/libs/!(*-@(dev|sources|javadoc)).jar
-  build/libs/*-@(dev|sources|javadocs).jar
+  build/libs/*-@(dev|sources|javadoc).jar
 ```
 
 #### name
@@ -474,7 +485,7 @@ loaders: |
 
 #### environment
 
-A set of supported environments. By default, `mc-publish` attempts to infer this value from your project's metadata file (e.g., `fabric.mod.json`, `mods.toml`, `quilt.mod.json`, etc.).
+A set of supported environments. By default, `game-publish` attempts to infer this value from your project's metadata file (e.g., `fabric.mod.json`, `mods.toml`, `quilt.mod.json`, etc.).
 
 ```yaml
 environment: client | server
@@ -493,7 +504,7 @@ Available environments (can be combined using the logical OR operator, as shown 
 
 #### game-versions
 
-An array of supported Minecraft versions. By default, `mc-publish` will look for `minecraft` dependency in your project's metadata file (e.g., `fabric.mod.json`, `mods.toml`, `quilt.mod.json`, etc.).
+An array of supported Minecraft versions. By default, `game-publish` will look for `minecraft` dependency in your project's metadata file (e.g., `fabric.mod.json`, `mods.toml`, `quilt.mod.json`, etc.).
 
 ```yaml
 game-versions: |
@@ -546,7 +557,7 @@ Example of work of each individual filter for `>=1.17 <=1.18` version range:
 
 #### dependencies
 
-An array of dependencies required by your project. By default, `mc-publish` will take them from your project's metadata file.
+An array of dependencies required by your project. By default, `game-publish` will take them from your project's metadata file.
 
 ```yaml
 dependencies: |
@@ -752,6 +763,30 @@ modrinth-rollback: false
 ```
 
 In the example above, publishing is rolled back on CurseForge and GitHub (which fall back to the shared value), but not on Modrinth.
+
+#### modrinth-rollback
+
+Overrides the global [`rollback`](#rollback) setting for Modrinth.
+
+```yaml
+modrinth-rollback: false
+```
+
+#### curseforge-rollback
+
+Overrides the global [`rollback`](#rollback) setting for CurseForge.
+
+```yaml
+curseforge-rollback: false
+```
+
+#### github-rollback
+
+Overrides the global [`rollback`](#rollback) setting for GitHub.
+
+```yaml
+github-rollback: false
+```
 
 ### 📤 Outputs
 

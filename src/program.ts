@@ -7,6 +7,8 @@ import { GitHubContext } from "@/platforms/github";
 import { SPLIT_BY_WORDS_AND_GROUP_ACTION_PARAMETER_PATH_PARSER, createActionOutputControllerUsingMetadata, getActionOutput, getAllActionInputsAsObjectUsingMetadata, parseActionMetadataFromFile, setActionOutput } from "@/utils/actions";
 import { ENVIRONMENT } from "@/utils/environment";
 import { ArgumentError, ArgumentNullError, ErrorBuilder, FailMode, FileNotFoundError } from "@/utils/errors";
+import { getFilePatterns } from "@/utils/io";
+import { collectMissingFiles } from "@/utils/missing-files";
 import { Logger, getDefaultLogger } from "@/utils/logging";
 import { DYNAMIC_MODULE_LOADER } from "@/utils/reflection";
 import { UnionToIntersection } from "@/utils/types";
@@ -50,7 +52,7 @@ export async function main(): Promise<void> {
 }
 
 /**
- * Initiates the publishing process.
+ * Publishes the assets to all available platforms.
  *
  * @param action - The action details.
  * @param githubContext - The GitHub context.
@@ -63,6 +65,13 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
     const errors = new ErrorBuilder(logger);
     const processedPlatforms = [] as PlatformType[];
     const published = new Map<PlatformType, { uploader: PlatformUploader<GenericPlatformUploadRequest, unknown>; report: unknown }>();
+
+    const missingFiles = collectMissingFiles(action.input);
+    if (missingFiles.length > 0) {
+        const error = new Error(`Cannot publish the release, missing files:\n\n${missingFiles.map(x => `    - ${x}`).join("\n")}`);
+        logger.error(error);
+        throw error;
+    }
 
     for (const platform of PlatformType.values()) {
         const platformOptions = { ...action.input, ...action.input[platform] };
@@ -80,7 +89,7 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
             continue;
         }
 
-        const options = await fillInDefaultValues(platformOptions as McPublishInput[typeof platform], platform, githubContext, metadataReader);
+        const options = await fillInDefaultValues(platformOptions as McPublishInput[PlatformType], platform, githubContext, metadataReader);
         const uploader = createPlatformUploader(platform, { logger, githubContext });
         try {
             const report = await uploader.upload(options);
@@ -134,7 +143,10 @@ async function rollbackAll(published: Map<PlatformType, { uploader: PlatformUplo
  * @returns A promise that resolves to the options with default values filled in.
  */
 async function fillInDefaultValues<T extends McPublishInput[P], P extends PlatformType>(options: T, platform: P, githubContext: GitHubContext, reader?: LoaderMetadataReader): Promise<T> {
-    ArgumentError.throwIfNullOrEmpty(options.files, "options.files", "No files found for the specified glob. Please ensure the glob is correct and files matching the pattern exist in the specified directory.");
+    const patternList = getFilePatterns(options.files);
+    ArgumentError.throwIfNullOrEmpty(options.files, "options.files", patternList.length
+        ? `No files found for the specified glob(s): ${patternList.join(", ")}. Please ensure the glob(s) are correct and files matching the pattern exist in the specified directory.`
+        : "No files were specified to upload.");
 
     options = { ...options };
     const primaryFile = options.files[0];

@@ -4,6 +4,7 @@ export {
     fileEquals,
     findFiles,
     findFilesSync,
+    getFilePatterns,
 } from "./file-info";
 
 export {
