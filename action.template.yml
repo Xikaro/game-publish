@@ -54,6 +54,9 @@ inputs:
   modrinth-rollback:
     type: boolean
     description: Set to true to delete the already published versions on all platforms if publishing to this platform fails. Overrides the global 'rollback' option.
+  modrinth-files:
+    type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
+    description: An array of globs determining which files to upload to Modrinth. Falls back to the global 'files' input if not provided.
 
   curseforge-id:
     type: string
@@ -70,6 +73,9 @@ inputs:
   curseforge-rollback:
     type: boolean
     description: Set to true to delete the already published versions on all platforms if publishing to this platform fails. Overrides the global 'rollback' option.
+  curseforge-files:
+    type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
+    description: An array of globs determining which files to upload to CurseForge. Falls back to the global 'files' input if not provided.
 
   github-tag:
     type: string
@@ -117,6 +123,9 @@ inputs:
   github-rollback:
     type: boolean
     description: Set to true to delete the already published versions on all platforms if publishing to this platform fails. Overrides the global 'rollback' option.
+  github-files:
+    type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
+    description: An array of globs determining extra files to upload to GitHub in addition to files published to Modrinth and CurseForge.
 
   files:
     type: utils.io.FileInfo[]:{findFiles}?processSeparately=false

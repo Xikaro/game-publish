@@ -49,10 +49,12 @@ jobs:
         with:
           modrinth-id: AANobbMI
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-files: build/modpack.mrpack
 
           curseforge-id: 394468
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-          curseforge-server-files: release/*-server.zip
+          curseforge-files: build/modpack.zip
+          curseforge-server-files: build/serverpack.zip
           curseforge-server-name: Server Pack v1.0.0
 
           github-tag: mc1.17.1-0.3.2
@@ -113,11 +115,13 @@ jobs:
 | [modrinth-id](#modrinth-id) | The unique identifier of your Modrinth project. | A value specified in the metadata file. | `AANobbMI` |
 | [modrinth-token](#modrinth-token) | Your Modrinth API token. | - | `${{ secrets.MODRINTH_TOKEN }}` |
 | [modrinth-rollback](#modrinth-rollback) | Override the global `rollback` setting for Modrinth. | The value of the global `rollback` input. | `true` <br> `false` |
+| [modrinth-files](#modrinth-files-input) | Files to upload to Modrinth. Overrides the global `files` input for this platform. | The value of the global `files` input. | `build/*.mrpack` |
 | [curseforge-id](#curseforge-id) | The unique identifier of your CurseForge project. | A value specified in the metadata file. | `394468` |
 | [curseforge-token](#curseforge-token) | Your CurseForge API token. | - | `${{ secrets.CURSEFORGE_TOKEN }}` |
 | [curseforge-server-files](#curseforge-server-files) | An array of [globs](https://www.digitalocean.com/community/tools/glob) determining which server pack files to upload to CurseForge. | - | `release/*-server.zip` |
 | [curseforge-server-name](#curseforge-server-name) | The display name of the server pack files. | The name of the server pack file. | `Server Pack v1.0.0` |
 | [curseforge-rollback](#curseforge-rollback) | Override the global `rollback` setting for CurseForge. | The value of the global `rollback` input. | `true` <br> `false` |
+| [curseforge-files](#curseforge-files-input) | Files to upload to CurseForge. Overrides the global `files` input for this platform. | The value of the global `files` input. | `build/modpack.zip` |
 | [github-tag](#github-tag) | The tag name for the release where assets will be uploaded. | If a release triggered the action, its tag is used. Otherwise, inferred from `GITHUB_REF`. | `mc1.17.1-0.3.2` |
 | [github-generate-changelog](#github-generate-changelog) | Set to `true` to generate a changelog automatically for this release. Ignored if the GitHub Release already exists. | `true`, if `changelog` and `changelog-file` are not provided; otherwise, `false`. | `true` <br> `false` |
 | [github-draft](#github-draft) | Set to `true` to create a draft release. Ignored if the GitHub Release already exists. | `false` | `true` <br> `false` |
@@ -126,6 +130,7 @@ jobs:
 | [github-discussion](#github-discussion) | If specified, creates and links a discussion of the specified **EXISTING** category to the release. Ignored if the GitHub Release already exists. | - | `Announcements` |
 | [github-token](#github-token) | Your GitHub API token. | - | `${{ secrets.GITHUB_TOKEN }}` |
 | [github-rollback](#github-rollback) | Override the global `rollback` setting for GitHub. | The value of the global `rollback` input. | `true` <br> `false` |
+| [github-files](#github-files-input) | Extra files to upload to GitHub in addition to files published on other platforms. | - | `build/extra-asset.zip` |
 | [github-repository](#github-repository) | The repository where the release will be created, formatted as `username/repository`. | The current repository. | `CaffeineMC/sodium-fabric` |
 | [github-overwrite-files](#github-overwrite-files) | Set to `true` to replace files that already exist in the release; `false` to skip uploading such files. Only applies when updating an existing release. | `true` | `true` <br> `false` |
 | [github-make-latest](#github-make-latest) | Specifies whether this release should be marked as the latest release. Only applies when creating a new release. | GitHub defaults for newly published releases. | `true` <br> `false` <br> `legacy` |
@@ -786,6 +791,30 @@ Overrides the global [`rollback`](#rollback) setting for GitHub.
 
 ```yaml
 github-rollback: false
+```
+
+#### modrinth-files-input
+
+Files uploaded to Modrinth. When provided, overrides the global [`files`](#files) input for Modrinth.
+
+```yaml
+modrinth-files: build/modpack.mrpack
+```
+
+#### curseforge-files-input
+
+Files uploaded to CurseForge. When provided, overrides the global [`files`](#files) input for CurseForge.
+
+```yaml
+curseforge-files: build/modpack.zip
+```
+
+#### github-files-input
+
+Extra files uploaded to GitHub in addition to files published on Modrinth and CurseForge. GitHub automatically collects files from the other platforms, so this input is only needed when you want to attach extra files.
+
+```yaml
+github-files: build/additional-asset.zip
 ```
 
 ### 📤 Outputs

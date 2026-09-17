@@ -9,6 +9,7 @@ import { ENVIRONMENT } from "@/utils/environment";
 import { ArgumentError, ArgumentNullError, ErrorBuilder, FailMode, FileNotFoundError } from "@/utils/errors";
 import { getFilePatterns } from "@/utils/io";
 import { collectMissingFiles } from "@/utils/missing-files";
+import { collectGitHubFiles, resolvePlatformFiles } from "@/utils/platform-files";
 import { Logger, getDefaultLogger } from "@/utils/logging";
 import { DYNAMIC_MODULE_LOADER } from "@/utils/reflection";
 import { UnionToIntersection } from "@/utils/types";
@@ -84,6 +85,9 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
             if (!githubHasOwnName) {
                 delete platformOptions.name;
             }
+            platformOptions.files = collectGitHubFiles(action.input);
+        } else {
+            platformOptions.files = resolvePlatformFiles(platform, action.input);
         }
         if (!platformOptions?.token?.unwrap()) {
             continue;

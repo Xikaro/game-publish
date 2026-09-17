@@ -38,6 +38,10 @@ inputs:
       published releases.
     default: ${undefined}
     required: false
+  modrinth-files:
+    description: An array of globs determining which files to upload.
+    default: ${undefined}
+    required: false
   curseforge-id:
     description: The unique identifier of your CurseForge project.
     required: false
@@ -59,6 +63,10 @@ inputs:
     description: Set to true to delete the already published versions on all
       platforms if publishing to any of the platforms fails. Prevents partially
       published releases.
+    default: ${undefined}
+    required: false
+  curseforge-files:
+    description: An array of globs determining which files to upload.
     default: ${undefined}
     required: false
   github-tag:
@@ -137,6 +145,10 @@ inputs:
     description: Set to true to delete the already published versions on all
       platforms if publishing to any of the platforms fails. Prevents partially
       published releases.
+    default: ${undefined}
+    required: false
+  github-files:
+    description: An array of globs determining which files to upload.
     default: ${undefined}
     required: false
   files:
@@ -222,18 +234,6 @@ inputs:
       platforms if publishing to any of the platforms fails. Prevents partially
       published releases.
     default: true
-    required: false
-  modrinth-files:
-    description: An array of globs determining which files to upload.
-    default: ${undefined}
-    required: false
-  curseforge-files:
-    description: An array of globs determining which files to upload.
-    default: ${undefined}
-    required: false
-  github-files:
-    description: An array of globs determining which files to upload.
-    default: ${undefined}
     required: false
   modrinth-files-primary:
     description: A glob determining the primary files to upload.

@@ -71,6 +71,11 @@ inputs:
       published releases.
     default: ${undefined}
     required: false
+  modrinth-files:
+    type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
+    description: An array of globs determining which files to upload.
+    default: ${undefined}
+    required: false
   curseforge-id:
     type: string
     description: The unique identifier of your CurseForge project.
@@ -97,6 +102,11 @@ inputs:
     description: Set to true to delete the already published versions on all
       platforms if publishing to any of the platforms fails. Prevents partially
       published releases.
+    default: ${undefined}
+    required: false
+  curseforge-files:
+    type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
+    description: An array of globs determining which files to upload.
     default: ${undefined}
     required: false
   github-tag:
@@ -190,6 +200,11 @@ inputs:
     description: Set to true to delete the already published versions on all
       platforms if publishing to any of the platforms fails. Prevents partially
       published releases.
+    default: ${undefined}
+    required: false
+  github-files:
+    type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
+    description: An array of globs determining which files to upload.
     default: ${undefined}
     required: false
   files:
@@ -298,21 +313,6 @@ inputs:
       platforms if publishing to any of the platforms fails. Prevents partially
       published releases.
     default: true
-    required: false
-  modrinth-files:
-    type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
-    description: An array of globs determining which files to upload.
-    default: ${undefined}
-    required: false
-  curseforge-files:
-    type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
-    description: An array of globs determining which files to upload.
-    default: ${undefined}
-    required: false
-  github-files:
-    type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
-    description: An array of globs determining which files to upload.
-    default: ${undefined}
     required: false
   modrinth-files-primary:
     type: utils.io.FileInfo[]:{findFiles}?processSeparately=false
