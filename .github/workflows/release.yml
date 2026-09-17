@@ -25,6 +25,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Read package version
         id: version
         shell: bash
@@ -36,6 +41,7 @@ jobs:
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Releasing version $VERSION as tag v$VERSION"
 
       - name: Check if tag exists
         id: tag_check
@@ -43,10 +49,17 @@ jobs:
         with:
           tag: ${{ steps.version.outputs.tag }}
 
+      - name: Skip if tag exists
+        if: ${{ steps.tag_check.outputs.exists == 'true' }}
+        run: |
+          echo "Tag ${{ steps.version.outputs.tag }} already exists. Skipping release."
+
       - name: Create GitHub Release and tag
         if: ${{ steps.tag_check.outputs.exists == 'false' }}
         uses: softprops/action-gh-release@v3.0.3
         with:
           tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
           name: ${{ steps.version.outputs.tag }}
           generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
