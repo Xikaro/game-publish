@@ -11,6 +11,7 @@ import { getFilePatterns } from "@/utils/io";
 import { collectMissingFiles } from "@/utils/missing-files";
 import { collectGitHubFiles, resolvePlatformFiles } from "@/utils/platform-files";
 import { Logger, getDefaultLogger } from "@/utils/logging";
+import { $i } from "@/utils/collections";
 import { DYNAMIC_MODULE_LOADER } from "@/utils/reflection";
 import { UnionToIntersection } from "@/utils/types";
 import { VersionType } from "@/utils/versioning";
@@ -74,6 +75,13 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
         throw error;
     }
 
+    const enabledPlatforms = $i(PlatformType.values()).filter(platform => action.input[platform]?.token?.unwrap()).toArray();
+    const skippedPlatforms = $i(PlatformType.values()).filter(platform => !action.input[platform]?.token?.unwrap()).toArray();
+    logger.info(`📦 Publishing to: ${enabledPlatforms.map(p => PlatformType.friendlyNameOf(p)).join(", ") || "none"}`);
+    if (skippedPlatforms.length > 0) {
+        logger.info(`⏭️ Skipping: ${skippedPlatforms.map(p => PlatformType.friendlyNameOf(p)).join(", ")} (no token provided)`);
+    }
+
     for (const platform of PlatformType.values()) {
         const platformOptions = { ...action.input, ...action.input[platform] };
 
@@ -86,14 +94,25 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
                 delete platformOptions.name;
             }
             platformOptions.files = collectGitHubFiles(action.input);
+            const githubFileNames = platformOptions.files?.map(file => file.name).join(", ") ?? "none";
+            logger.info(`🗂️ GitHub release will include ${platformOptions.files?.length ?? 0} file(s): ${githubFileNames}`);
         } else {
+            const usesPlatformFiles = action.input[platform]?.files !== undefined;
             platformOptions.files = resolvePlatformFiles(platform, action.input);
+            const source = usesPlatformFiles ? `${platform}-files` : "files";
+            logger.info(`📁 ${PlatformType.friendlyNameOf(platform)} will use '${source}' input`);
         }
         if (!platformOptions?.token?.unwrap()) {
+            logger.debug(`Skipping ${PlatformType.friendlyNameOf(platform)}: no token provided.`);
             continue;
         }
 
+        const fileNames = platformOptions.files?.map(file => file.name).join(", ") ?? "none";
+        logger.info(`🚀 Preparing to publish to ${PlatformType.friendlyNameOf(platform)} with files: ${fileNames}`);
+
         const options = await fillInDefaultValues(platformOptions as McPublishInput[PlatformType], platform, githubContext, metadataReader);
+
+        logger.info(`🔖 ${PlatformType.friendlyNameOf(platform)} version: ${options.version ?? "<auto>"}, name: ${options.name ?? "<auto>"}, loaders: ${options.loaders?.join(", ") ?? "<auto>"}, game versions: ${options.gameVersions?.join(", ") ?? "<auto>"}`);
         const uploader = createPlatformUploader(platform, { logger, githubContext });
         try {
             const report = await uploader.upload(options);
