@@ -1,7 +1,8 @@
-import { ModrinthUploadReport as UploadReport, ModrinthUploadRequest as UploadRequest } from "@/action";
+import { ModrinthUploadRequest as UploadRequest } from "@/action";
 import { Dependency } from "@/dependencies";
 import { GenericPlatformUploader, GenericPlatformUploaderOptions } from "@/platforms/generic-platform-uploader";
 import { PlatformType } from "@/platforms/platform-type";
+import { UploadedFile } from "@/platforms/uploaded-file";
 import { $i } from "@/utils/collections";
 import { IGNORE_CASE_AND_NON_WORD_CHARACTERS_EQUALITY_COMPARER } from "@/utils/comparison";
 import { ArgumentError } from "@/utils/errors";
@@ -27,7 +28,12 @@ export type ModrinthUploadRequest = UploadRequest;
 /**
  * Specifies the structure of the report generated after a successful upload to Modrinth.
  */
-export type ModrinthUploadReport = UploadReport;
+export interface ModrinthUploadReport {
+    id: string;
+    version: string;
+    url: string;
+    files: UploadedFile[];
+}
 
 /**
  * Implements the uploader for Modrinth.

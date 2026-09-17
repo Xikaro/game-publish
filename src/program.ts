@@ -116,7 +116,13 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
         const uploader = createPlatformUploader(platform, { logger, githubContext });
         try {
             const report = await uploader.upload(options);
-            action.output[platform as string] = report;
+            (action.output as unknown as Record<string, unknown>)[platform as string] = report;
+
+            const uploadedFiles = (report as { files: { id: number | string; name: string; url: string }[] }).files;
+            const fileMap = Object.fromEntries(uploadedFiles.map(file => [file.name, file.url]));
+            setActionOutput(`${platform as string}-files`, JSON.stringify(fileMap));
+            setActionOutput(`${platform as string}-assets`, JSON.stringify(uploadedFiles));
+
             processedPlatforms.push(platform);
             published.set(platform, { uploader, report });
         } catch (e) {

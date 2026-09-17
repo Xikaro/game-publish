@@ -824,15 +824,18 @@ github-files: build/additional-asset.zip
 | [modrinth-id](#modrinth-id-1) | The unique identifier of your Modrinth project. | `"AANobbMI"` |
 | [modrinth-version](#modrinth-version) | The unique identifier of the version published on Modrinth by this action. | `"Fz37KqRh"` |
 | [modrinth-url](#modrinth-url) | The URL directing to the newly published version on Modrinth. | `"https://modrinth.com/mod/sodium/version/mc1.17.1-0.3.4"` |
-| [modrinth-files](#modrinth-files) | Array of objects, each containing details about the files published for the new version on Modrinth. | `"[]"` |
+| [modrinth-files](#modrinth-files) | JSON object mapping asset file names to their download URLs for Modrinth. | `"{}"` |
+| [modrinth-assets](#modrinth-assets) | JSON array of objects with details about the files published for the new version on Modrinth. | `"[]"` |
 | [curseforge-id](#curseforge-id-1) | The unique identifier of your CurseForge project. | `"394468"` |
 | [curseforge-version](#curseforge-version) | The unique identifier of the version published on CurseForge by this action. | `"3488820"` |
 | [curseforge-url](#curseforge-url) | The URL directing to the newly published version on CurseForge. | `https://www.curseforge.com/api/v1/mods/394468/files/3488820/download` |
-| [curseforge-files](#curseforge-files) | Array of objects, each containing details about the files published for the new version on CurseForge. | `"[]"` |
+| [curseforge-files](#curseforge-files) | JSON object mapping asset file names to their download URLs for CurseForge. | `"{}"` |
+| [curseforge-assets](#curseforge-assets) | JSON array of objects with details about the files published for the new version on CurseForge. | `"[]"` |
 | [github-repo](#github-repo) | The full repository name on GitHub, formatted as 'username/repository'. | `"CaffeineMC/sodium-fabric"` |
 | [github-tag](#github-tag-1) | The Git tag associated with the new or updated release published on GitHub. | `"mc1.17.1-0.3.4"` |
 | [github-url](#github-url) | The URL directing to the newly published version on GitHub. | `"https://github.com/CaffeineMC/sodium-fabric/releases/tag/mc1.17.1-0.3.4"` |
-| [github-files](#github-files) | Array of objects, each containing details about the files published for the new version on GitHub. | `"[]"` |
+| [github-files](#github-files) | JSON object mapping asset file names to their download URLs for GitHub. | `"{}"` |
+| [github-assets](#github-assets) | JSON array of objects with details about the files published for the new version on GitHub. | `"[]"` |
 
 #### modrinth-id
 
@@ -860,14 +863,22 @@ The URL directing to the newly published version on Modrinth.
 
 #### modrinth-files
 
-Array of objects, each containing details about the files published for the new version on Modrinth.
+JSON object mapping asset file names to their download URLs for Modrinth.
+
+```js
+`{"sodium-fabric-mc1.17.1-0.3.4.jar":"https://cdn.modrinth.com/data/AANobbMI/versions/mc1.17.1-0.3.4/sodium-fabric-mc1.17.1-0.3.4.jar"}`
+```
+
+#### modrinth-assets
+
+JSON array of objects with details about the files published for the new version on Modrinth.
 
 ```js
 `[
   {
-    "name": "sodium-fabric-mc1.17.1-0.3.4+build.13.jar",
+    "name": "sodium-fabric-mc1.17.1-0.3.4.jar",
     "id": "85f5d67f0ce9e995e738eb6b60034bc919a1859d",
-    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/mc1.17.1-0.3.4/sodium-fabric-mc1.17.1-0.3.4%2Bbuild.13.jar"
+    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/mc1.17.1-0.3.4/sodium-fabric-mc1.17.1-0.3.4.jar"
   }
 ]`
 ```
@@ -898,12 +909,20 @@ The URL directing to the newly published version on CurseForge.
 
 #### curseforge-files
 
-Array of objects, each containing details about the files published for the new version on CurseForge.
+JSON object mapping asset file names to their download URLs for CurseForge.
+
+```js
+`{"sodium-fabric-mc1.17.1-0.3.4.jar":"https://www.curseforge.com/api/v1/mods/394468/files/3488820/download"}`
+```
+
+#### curseforge-assets
+
+JSON array of objects with details about the files published for the new version on CurseForge.
 
 ```js
 `[
   {
-    "name": "sodium-fabric-mc1.17.1-0.3.4+build.13.jar",
+    "name": "sodium-fabric-mc1.17.1-0.3.4.jar",
     "id": 394468,
     "url": "https://www.curseforge.com/api/v1/mods/394468/files/3488820/download"
   }
@@ -936,14 +955,22 @@ The URL directing to the newly published version on GitHub.
 
 #### github-files
 
-Array of objects, each containing details about the files published for the new version on GitHub.
+JSON object mapping asset file names to their download URLs for GitHub.
+
+```js
+`{"sodium-fabric-mc1.17.1-0.3.4.jar":"https://github.com/CaffeineMC/sodium-fabric/releases/download/mc1.17.1-0.3.4/sodium-fabric-mc1.17.1-0.3.4.jar"}`
+```
+
+#### github-assets
+
+JSON array of objects with details about the files published for the new version on GitHub.
 
 ```js
 `[
   {
-    "name": "sodium-fabric-mc1.17.1-0.3.4+build.13.jar",
+    "name": "sodium-fabric-mc1.17.1-0.3.4.jar",
     "id": 53929869,
-    "url": "https://github.com/CaffeineMC/sodium-fabric/releases/download/mc1.17.1-0.3.4/sodium-fabric-mc1.17.1-0.3.4%2Bbuild.13.jar"
+    "url": "https://github.com/CaffeineMC/sodium-fabric/releases/download/mc1.17.1-0.3.4/sodium-fabric-mc1.17.1-0.3.4.jar"
   }
 ]`
 ```

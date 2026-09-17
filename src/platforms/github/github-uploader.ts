@@ -1,6 +1,7 @@
-import { GitHubUploadReport as UploadReport, GitHubUploadRequest as UploadRequest } from "@/action";
+import { GitHubUploadRequest as UploadRequest } from "@/action";
 import { GenericPlatformUploader, GenericPlatformUploaderOptions } from "@/platforms/generic-platform-uploader";
 import { PlatformType } from "@/platforms/platform-type";
+import { UploadedFile } from "@/platforms/uploaded-file";
 import { ArgumentError, ArgumentNullError } from "@/utils/errors";
 import { VersionType } from "@/utils/versioning";
 import { GitHubApiClient } from "./github-api-client";
@@ -32,7 +33,12 @@ export type GitHubUploadRequest = UploadRequest;
 /**
  * Specifies the structure of the report generated after a successful upload to GitHub.
  */
-export type GitHubUploadReport = UploadReport;
+export interface GitHubUploadReport {
+    repo: string;
+    tag: string;
+    url: string;
+    files: UploadedFile[];
+}
 
 /**
  * Implements the uploader for GitHub.

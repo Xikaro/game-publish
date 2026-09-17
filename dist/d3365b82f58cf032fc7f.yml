@@ -599,10 +599,13 @@ outputs:
     type: string
     description: The URL directing to the newly published version on Modrinth.
   modrinth-files:
+    type: string
+    description: A JSON object mapping asset file names to their download URLs for Modrinth.
+  modrinth-assets:
     type: platforms.UploadedFile[]
-    description: Array of objects, each containing details about the files published
-      for the new version on Modrinth, such as file `name`, `id`, and download
-      `url`.
+    description: A JSON array of objects, each containing details about the files
+      published for the new version on Modrinth, such as file `name`, `id`, and
+      download `url`.
   curseforge-id:
     type: number
     description: The unique identifier of your CurseForge project.
@@ -614,10 +617,14 @@ outputs:
     type: string
     description: The URL directing to the newly published version on CurseForge.
   curseforge-files:
+    type: string
+    description: A JSON object mapping asset file names to their download URLs for
+      CurseForge.
+  curseforge-assets:
     type: platforms.UploadedFile[]
-    description: Array of objects, each containing details about the files published
-      for the new version on CurseForge, such as file `name`, `id`, and download
-      `url`.
+    description: A JSON array of objects, each containing details about the files
+      published for the new version on CurseForge, such as file `name`, `id`,
+      and download `url`.
   github-repo:
     type: string
     description: The full repository name on GitHub, formatted as 'username/repository'.
@@ -628,10 +635,13 @@ outputs:
     type: string
     description: The URL directing to the newly published version on GitHub.
   github-files:
+    type: string
+    description: A JSON object mapping asset file names to their download URLs for GitHub.
+  github-assets:
     type: platforms.UploadedFile[]
-    description: Array of objects, each containing details about the files published
-      for the new version on GitHub, such as file `name`, `id`, and download
-      `url`.
+    description: A JSON array of objects, each containing details about the files
+      published for the new version on GitHub, such as file `name`, `id`, and
+      download `url`.
 runs:
   using: node24
   main: dist/index.js

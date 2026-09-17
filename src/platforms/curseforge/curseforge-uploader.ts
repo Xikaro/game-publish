@@ -1,8 +1,9 @@
-import { CurseForgeUploadRequest as UploadRequest, CurseForgeUploadReport as UploadReport } from "@/action";
+import { CurseForgeUploadRequest as UploadRequest } from "@/action";
 import { Dependency } from "@/dependencies";
 import { LoaderEnvironmentType } from "@/loaders/loader-environment-type";
 import { PlatformType } from "@/platforms/platform-type";
 import { GenericPlatformUploader, GenericPlatformUploaderOptions } from "@/platforms/generic-platform-uploader";
+import { UploadedFile } from "@/platforms/uploaded-file";
 import { ArgumentError } from "@/utils/errors";
 import { SecureString } from "@/utils/security";
 import { stringEquals } from "@/utils/string-utils";
@@ -27,7 +28,12 @@ export type CurseForgeUploadRequest = UploadRequest;
 /**
  * Specifies the structure of the report generated after a successful upload to CurseForge.
  */
-export type CurseForgeUploadReport = UploadReport;
+export interface CurseForgeUploadReport {
+    id: number;
+    version: number;
+    url: string;
+    files: UploadedFile[];
+}
 
 /**
  * Implements the uploader for CurseForge.

@@ -489,9 +489,14 @@ export interface McPublishOutput {
         url: string;
 
         /**
-         * Array of objects, each containing details about the files published for the new version on Modrinth, such as file `name`, `id`, and download `url`.
+         * A JSON object mapping asset file names to their download URLs for Modrinth.
          */
-        files: UploadedFile[];
+        files: string;
+
+        /**
+         * A JSON array of objects, each containing details about the files published for the new version on Modrinth, such as file `name`, `id`, and download `url`.
+         */
+        assets: UploadedFile[];
     };
 
     /**
@@ -514,9 +519,14 @@ export interface McPublishOutput {
         url: string;
 
         /**
-         * Array of objects, each containing details about the files published for the new version on CurseForge, such as file `name`, `id`, and download `url`.
+         * A JSON object mapping asset file names to their download URLs for CurseForge.
          */
-        files: UploadedFile[];
+        files: string;
+
+        /**
+         * A JSON array of objects, each containing details about the files published for the new version on CurseForge, such as file `name`, `id`, and download `url`.
+         */
+        assets: UploadedFile[];
     };
 
     /**
@@ -539,9 +549,14 @@ export interface McPublishOutput {
         url: string;
 
         /**
-         * Array of objects, each containing details about the files published for the new version on GitHub, such as file `name`, `id`, and download `url`.
+         * A JSON object mapping asset file names to their download URLs for GitHub.
          */
-        files: UploadedFile[];
+        files: string;
+
+        /**
+         * A JSON array of objects, each containing details about the files published for the new version on GitHub, such as file `name`, `id`, and download `url`.
+         */
+        assets: UploadedFile[];
     };
 };
 

@@ -455,9 +455,11 @@ outputs:
   modrinth-url:
     description: The URL directing to the newly published version on Modrinth.
   modrinth-files:
-    description: Array of objects, each containing details about the files published
-      for the new version on Modrinth, such as file `name`, `id`, and download
-      `url`.
+    description: A JSON object mapping asset file names to their download URLs for Modrinth.
+  modrinth-assets:
+    description: A JSON array of objects, each containing details about the files
+      published for the new version on Modrinth, such as file `name`, `id`, and
+      download `url`.
   curseforge-id:
     description: The unique identifier of your CurseForge project.
   curseforge-version:
@@ -466,9 +468,12 @@ outputs:
   curseforge-url:
     description: The URL directing to the newly published version on CurseForge.
   curseforge-files:
-    description: Array of objects, each containing details about the files published
-      for the new version on CurseForge, such as file `name`, `id`, and download
-      `url`.
+    description: A JSON object mapping asset file names to their download URLs for
+      CurseForge.
+  curseforge-assets:
+    description: A JSON array of objects, each containing details about the files
+      published for the new version on CurseForge, such as file `name`, `id`,
+      and download `url`.
   github-repo:
     description: The full repository name on GitHub, formatted as 'username/repository'.
   github-tag:
@@ -476,9 +481,11 @@ outputs:
   github-url:
     description: The URL directing to the newly published version on GitHub.
   github-files:
-    description: Array of objects, each containing details about the files published
-      for the new version on GitHub, such as file `name`, `id`, and download
-      `url`.
+    description: A JSON object mapping asset file names to their download URLs for GitHub.
+  github-assets:
+    description: A JSON array of objects, each containing details about the files
+      published for the new version on GitHub, such as file `name`, `id`, and
+      download `url`.
 runs:
   using: node24
   main: dist/index.js
