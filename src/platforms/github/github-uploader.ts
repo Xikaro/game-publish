@@ -183,6 +183,7 @@ export class GitHubUploader extends GenericPlatformUploader<GitHubUploaderOption
 
         if (!id && tag) {
             const prerelease = request.prerelease ?? request.versionType !== VersionType.RELEASE;
+            this._logger.info(`🏷️ Creating GitHub release as ${prerelease ? "prerelease" : "full release"} (version type: ${request.versionType ?? "<auto>"}, github-prerelease: ${request.prerelease ?? "<unset>"})`);
             const generateReleaseNotes = request.generateChangelog ?? !request.changelog;
 
             // Non-prerelease releases are created as drafts and published after their
