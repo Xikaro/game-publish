@@ -180,6 +180,8 @@ export class CurseForgeUploader extends GenericPlatformUploader<CurseForgeUpload
             return;
         }
 
+        this._logger.warn("⚠️ CurseForge rollback is best-effort: CurseForge does not expose a public API for deleting files. Files may need to be removed manually.");
+
         const api = new CurseForgeUploadApiClient({ token: token.unwrap(), fetch: this._fetch });
         for (const file of report.files) {
             try {
@@ -187,7 +189,7 @@ export class CurseForgeUploader extends GenericPlatformUploader<CurseForgeUpload
                 if (deleted) {
                     this._logger.info(`🗑️ Rolled back CurseForge file '${file.name}'`);
                 } else {
-                    this._logger.warn(`⚠️ Could not delete CurseForge file '${file.name}' (it may not exist anymore)`);
+                    this._logger.warn(`⚠️ Could not delete CurseForge file '${file.name}' (the CurseForge Upload API does not support file deletion)`);
                 }
             } catch (e) {
                 this._logger.warn(`⚠️ Failed to roll back CurseForge file '${file.name}': ${e}`);
