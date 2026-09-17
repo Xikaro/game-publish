@@ -40,8 +40,8 @@ jobs:
             VERSION=$(node -p "require('./package.json').version")
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Releasing version $VERSION as tag v$VERSION"
+          echo "tag=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Releasing version $VERSION as tag $VERSION"
 
       - name: Check if tag exists
         id: tag_check
