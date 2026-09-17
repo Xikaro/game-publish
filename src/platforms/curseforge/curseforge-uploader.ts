@@ -137,6 +137,7 @@ export class CurseForgeUploader extends GenericPlatformUploader<CurseForgeUpload
             project_id: projectId,
             version_type: request.versionType,
             changelog: request.changelog,
+            changelog_type: request.changelogFormat as "text" | "html" | "markdown" | undefined,
             game_versions: request.gameVersions,
             java_versions: request.java,
             loaders: request.loaders,

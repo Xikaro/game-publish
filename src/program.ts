@@ -1,4 +1,5 @@
 import { McPublishInput, McPublishOutput } from "@/action";
+import { readChangelogForVersion } from "@/utils/changelog-parser";
 import { GameVersionFilter, getGameVersionProviderByName } from "@/games";
 import { MINECRAFT } from "@/games/minecraft";
 import { LoaderMetadata, LoaderMetadataReader, createDefaultLoaderMetadataReader } from "@/loaders";
@@ -73,6 +74,19 @@ async function publish(action: Action, githubContext: GitHubContext, logger: Log
         const error = new Error(`Cannot publish the release, missing files:\n\n${missingFiles.map(x => `    - ${x}`).join("\n")}`);
         logger.error(error);
         throw error;
+    }
+
+    if (action.input.changelogFile && action.input.version) {
+        try {
+            const changelog = await readChangelogForVersion(action.input.changelogFile, action.input.version);
+            if (changelog) {
+                action.input.changelog = changelog;
+            } else {
+                logger.warn(`⚠️ Could not find a changelog section for version '${action.input.version}' in '${action.input.changelogFile}'.`);
+            }
+        } catch (e) {
+            logger.warn(`⚠️ Could not read changelog file '${action.input.changelogFile}': ${e}`);
+        }
     }
 
     const enabledPlatforms = $i(PlatformType.values()).filter(platform => action.input[platform]?.token?.unwrap()).toArray();

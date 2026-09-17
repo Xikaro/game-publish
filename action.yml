@@ -184,9 +184,17 @@ inputs:
     required: false
     default: ${undefined}
   changelog-file:
-    description: A glob pointing to the changelog file.
+    description: The path or glob of the changelog file. If provided, the action
+      extracts the changelog entry for the version specified by the 'version'
+      input. Falls back to the global 'changelog' input if the version is not
+      found in the file.
     required: false
     default: ${undefined}
+  changelog-format:
+    description: The format of the changelog. Used by CurseForge to determine how to
+      render the changelog. Supported values are 'markdown', 'text', and 'html'.
+    default: markdown
+    required: false
   loaders:
     description: An array of supported mod loaders.
     required: false
@@ -310,17 +318,41 @@ inputs:
     required: false
     default: ${undefined}
   modrinth-changelog-file:
-    description: A glob pointing to the changelog file.
+    description: The path or glob of the changelog file. If provided, the action
+      extracts the changelog entry for the version specified by the 'version'
+      input. Falls back to the global 'changelog' input if the version is not
+      found in the file.
     required: false
     default: ${undefined}
   curseforge-changelog-file:
-    description: A glob pointing to the changelog file.
+    description: The path or glob of the changelog file. If provided, the action
+      extracts the changelog entry for the version specified by the 'version'
+      input. Falls back to the global 'changelog' input if the version is not
+      found in the file.
     required: false
     default: ${undefined}
   github-changelog-file:
-    description: A glob pointing to the changelog file.
+    description: The path or glob of the changelog file. If provided, the action
+      extracts the changelog entry for the version specified by the 'version'
+      input. Falls back to the global 'changelog' input if the version is not
+      found in the file.
     required: false
     default: ${undefined}
+  modrinth-changelog-format:
+    description: The format of the changelog. Used by CurseForge to determine how to
+      render the changelog. Supported values are 'markdown', 'text', and 'html'.
+    default: ${undefined}
+    required: false
+  curseforge-changelog-format:
+    description: The format of the changelog. Used by CurseForge to determine how to
+      render the changelog. Supported values are 'markdown', 'text', and 'html'.
+    default: ${undefined}
+    required: false
+  github-changelog-format:
+    description: The format of the changelog. Used by CurseForge to determine how to
+      render the changelog. Supported values are 'markdown', 'text', and 'html'.
+    default: ${undefined}
+    required: false
   modrinth-loaders:
     description: An array of supported mod loaders.
     required: false

@@ -76,6 +76,11 @@ export interface GenericPlatformUploadRequest {
     changelog?: string;
 
     /**
+     * The format of the changelog. Supported values are 'markdown', 'text', and 'html'.
+     */
+    changelogFormat?: string;
+
+    /**
      * An array of loaders that the project is compatible with.
      */
     loaders?: string[];

@@ -84,6 +84,16 @@ export interface McPublishInput {
         changelog?: string;
 
         /**
+         * The path or glob of the changelog file. If provided, the action extracts the changelog entry for the version specified by the 'version' input. Falls back to the global 'changelog' input if the version is not found in the file.
+         */
+        changelogFile?: string;
+
+        /**
+         * The format of the changelog. Used by CurseForge to determine how to render the changelog. Supported values are 'markdown', 'text', and 'html'.
+         */
+        changelogFormat?: string;
+
+        /**
          * An array of supported mod loaders.
          */
         loaders?: string[];
@@ -182,6 +192,16 @@ export interface McPublishInput {
          * The changelog for this version.
          */
         changelog?: string;
+
+        /**
+         * The path or glob of the changelog file. If provided, the action extracts the changelog entry for the version specified by the 'version' input. Falls back to the global 'changelog' input if the version is not found in the file.
+         */
+        changelogFile?: string;
+
+        /**
+         * The format of the changelog. Used by CurseForge to determine how to render the changelog. Supported values are 'markdown', 'text', and 'html'.
+         */
+        changelogFormat?: string;
 
         /**
          * An array of supported mod loaders.
@@ -329,6 +349,16 @@ export interface McPublishInput {
         changelog?: string;
 
         /**
+         * The path or glob of the changelog file. If provided, the action extracts the changelog entry for the version specified by the 'version' input. Falls back to the global 'changelog' input if the version is not found in the file.
+         */
+        changelogFile?: string;
+
+        /**
+         * The format of the changelog. Used by CurseForge to determine how to render the changelog. Supported values are 'markdown', 'text', and 'html'.
+         */
+        changelogFormat?: string;
+
+        /**
          * An array of supported mod loaders.
          */
         loaders?: string[];
@@ -398,6 +428,16 @@ export interface McPublishInput {
      * The changelog for this version.
      */
     changelog?: string;
+
+    /**
+     * The path or glob of the changelog file. If provided, the action extracts the changelog entry for the version specified by the 'version' input. Falls back to the global 'changelog' input if the version is not found in the file.
+     */
+    changelogFile?: string;
+
+    /**
+     * The format of the changelog. Used by CurseForge to determine how to render the changelog. Supported values are 'markdown', 'text', and 'html'.
+     */
+    changelogFormat?: string;
 
     /**
      * An array of supported mod loaders.

@@ -142,7 +142,8 @@ jobs:
 | [version](#version) | The version number. | A tag of the release that triggered the action. | `mc1.17.1-0.3.2` |
 | [version-type](#version-type) | The version type. | Will be parsed from the `version` value. | `alpha` <br> `beta` <br> `release` |
 | [changelog](#changelog) | The changelog for this version. | A body of the release that triggered the action. | `This release fixes a few more issues in Sodium 0.3 for Minecraft 1.17.1.` |
-| [changelog-file](#changelog-file) | A [glob](https://www.digitalocean.com/community/tools/glob) pointing to the changelog file. | - | `CHANGELOG.md` |
+| [changelog-file](#changelog-file) | A [glob](https://www.digitalocean.com/community/tools/glob) pointing to the changelog file. The action extracts the section matching the `version` input. | - | `CHANGELOG.md` |
+| [changelog-format](#changelog-format) | The format of the changelog. Used by CurseForge to render the changelog. | `markdown` | `markdown` <br> `text` <br> `html` |
 | [loaders](#loaders) | An array of supported loaders. | A value specified in the metadata file. | `fabric` <br> `forge` <br> `quilt` <br> `rift` |
 | [environment](#environment) | A set of supported environments. | A value specified in the metadata file. | `client` <br> `server` <br> `client \| server` |
 | [game-versions](#game-versions) | An array of supported Minecraft versions. | A value specified in the metadata file. | `21w37a` <br> `>=1.17` <br> `[1.17,)` |
@@ -455,10 +456,26 @@ changelog: This release fixes a few more issues in Sodium 0.3 for Minecraft 1.17
 
 #### changelog-file
 
-A [glob](https://www.digitalocean.com/community/tools/glob) pointing to the changelog file.
+A [glob](https://www.digitalocean.com/community/tools/glob) pointing to the changelog file. If `version` is provided, the action searches the file for a section matching that version and uses it as the changelog.
+
+Supported heading formats:
+
+```markdown
+## [1.0.1] - 2024-01-02
+## 1.0.1
+## v1.0.1
+```
 
 ```yaml
-changelog-file: CHANGELOG.*
+changelog-file: CHANGELOG.md
+```
+
+#### changelog-format
+
+The format of the changelog. Used by CurseForge to determine how to render the changelog. Ignored by Modrinth and GitHub, which always use Markdown.
+
+```yaml
+changelog-format: markdown
 ```
 
 #### loaders

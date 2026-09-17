@@ -249,11 +249,19 @@ inputs:
     required: false
     default: ${undefined}
   changelog-file:
-    type: string;utils/io/file-info->{readAllText}
-    redirect: changelog
-    description: A glob pointing to the changelog file.
+    type: string
+    description: The path or glob of the changelog file. If provided, the action
+      extracts the changelog entry for the version specified by the 'version'
+      input. Falls back to the global 'changelog' input if the version is not
+      found in the file.
     required: false
     default: ${undefined}
+  changelog-format:
+    type: string
+    description: The format of the changelog. Used by CurseForge to determine how to
+      render the changelog. Supported values are 'markdown', 'text', and 'html'.
+    default: markdown
+    required: false
   loaders:
     type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported mod loaders.
@@ -412,23 +420,47 @@ inputs:
     required: false
     default: ${undefined}
   modrinth-changelog-file:
-    type: string;utils/io/file-info->{readAllText}
-    redirect: modrinth-changelog
-    description: A glob pointing to the changelog file.
+    type: string
+    description: The path or glob of the changelog file. If provided, the action
+      extracts the changelog entry for the version specified by the 'version'
+      input. Falls back to the global 'changelog' input if the version is not
+      found in the file.
     required: false
     default: ${undefined}
   curseforge-changelog-file:
-    type: string;utils/io/file-info->{readAllText}
-    redirect: curseforge-changelog
-    description: A glob pointing to the changelog file.
+    type: string
+    description: The path or glob of the changelog file. If provided, the action
+      extracts the changelog entry for the version specified by the 'version'
+      input. Falls back to the global 'changelog' input if the version is not
+      found in the file.
     required: false
     default: ${undefined}
   github-changelog-file:
-    type: string;utils/io/file-info->{readAllText}
-    redirect: github-changelog
-    description: A glob pointing to the changelog file.
+    type: string
+    description: The path or glob of the changelog file. If provided, the action
+      extracts the changelog entry for the version specified by the 'version'
+      input. Falls back to the global 'changelog' input if the version is not
+      found in the file.
     required: false
     default: ${undefined}
+  modrinth-changelog-format:
+    type: string
+    description: The format of the changelog. Used by CurseForge to determine how to
+      render the changelog. Supported values are 'markdown', 'text', and 'html'.
+    default: ${undefined}
+    required: false
+  curseforge-changelog-format:
+    type: string
+    description: The format of the changelog. Used by CurseForge to determine how to
+      render the changelog. Supported values are 'markdown', 'text', and 'html'.
+    default: ${undefined}
+    required: false
+  github-changelog-format:
+    type: string
+    description: The format of the changelog. Used by CurseForge to determine how to
+      render the changelog. Supported values are 'markdown', 'text', and 'html'.
+    default: ${undefined}
+    required: false
   modrinth-loaders:
     type: string[]?separator=/[\r\n,%20]%2B/
     description: An array of supported mod loaders.

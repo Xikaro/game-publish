@@ -5,6 +5,10 @@ export {
     findFiles,
     findFilesSync,
     getFilePatterns,
+    readAllText,
+    readAllTextSync,
+    readFile,
+    readFileSync,
 } from "./file-info";
 
 export {
